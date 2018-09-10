@@ -10,13 +10,14 @@
   "author": "Rise Vision",
   "license": "GPL-3.0+",
   "scripts": {
-    "test": "polymer test --npm"
+    "test": "eslint . && polymer test --npm"
   },
   "dependencies": {
     "@polymer/polymer": "^3.0.5",
     "@webcomponents/webcomponentsjs": "^2.1.1"
   },
   "devDependencies": {
+    "eslint": "^5.5.0",
     "wct-browser-legacy": "^1.0.1"
   }
 }
