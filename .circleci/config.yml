@@ -10,8 +10,8 @@ jobs:
     steps:
       - checkout
       - run: npm install
-      - run: npm install -g polymer-cli
-      - run: polymer test --npm
+      - run: sudo npm install -g polymer-cli
+      - run: npm test
 
 workflows:
   version: 2
