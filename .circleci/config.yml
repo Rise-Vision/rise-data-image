@@ -2,15 +2,13 @@ version: 2
 
 jobs:
   build_and_test:
+    working_directory: ~/Rise-Vision/rise-data-image
+    shell: /bin/bash --login
     docker: &BUILDIMAGE
-      - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
+      - image: jenkinsrise/cci-v2-transitional-widgets:0.0.1
+        command: /sbin/init
     steps:
       - checkout
-      # latest stable chrome
-      - run: curl -L -o google-chrome-stable.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-      - run: sudo dpkg -i google-chrome-stable.deb
-      # make chrome lxc-friendly
-      - run: sudo sed -i 's|HERE/chrome\"|HERE/chrome\" --disable-setuid-sandbox|g' /opt/google/chrome/google-chrome
       - run: npm install
       - run: npm install -g polymer-cli
       - run: polymer test --npm
