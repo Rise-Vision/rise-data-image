@@ -5,12 +5,11 @@ jobs:
     working_directory: ~/Rise-Vision/rise-data-image
     shell: /bin/bash --login
     docker: &BUILDIMAGE
-      - image: jenkinsrise/cci-v2-transitional-widgets:0.0.1
+      - image: jenkinsrise/cci-v2-components:0.0.1
         command: /sbin/init
     steps:
       - checkout
       - run: npm install
-      - run: npm install -f polymer-cli
       - run: npm test
 
 workflows:
