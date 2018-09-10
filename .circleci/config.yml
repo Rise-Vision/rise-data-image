@@ -3,7 +3,7 @@ version: 2
 jobs:
   build_and_test:
     docker: &BUILDIMAGE
-      - image: jenkinsrise/jenkinsrise-cci-image-launcher-electron-e2e:0.0.2
+      - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
     steps:
       - checkout
       # latest stable chrome
