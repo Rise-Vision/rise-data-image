@@ -1,0 +1,23 @@
+{
+  "name": "rise-data-image",
+  "version": "0.0.1",
+  "description": "Web component for retrieving image data on a Rise Vision Template based page",
+  "repository": "https://github.com/Rise-vision/rise-data-image.git",
+  "bugs": {
+    "url": "https://github.com/Rise-Vision/rise-data-image/issues"
+  },
+  "homepage": "https://github.com/Rise-Vision/rise-data-image",
+  "author": "Rise Vision",
+  "license": "GPL-3.0+",
+  "scripts": {
+    "test": "eslint . && polymer test --npm"
+  },
+  "dependencies": {
+    "@polymer/polymer": "^3.0.5",
+    "@webcomponents/webcomponentsjs": "^2.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.5.0",
+    "wct-browser-legacy": "^1.0.1"
+  }
+}

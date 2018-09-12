@@ -1,0 +1,16 @@
+{
+  "extraDependencies": [
+    "node_modules/@polymer/polymer/**",
+    "node_modules/@webcomponents/webcomponentsjs/**"
+  ],
+  "builds": [
+    {
+      "name": "prod",
+      "preset": "es6-bundled",
+      "js": {"minify": true},
+      "css": {"minify": true}
+    }
+  ],
+  "moduleResolution": "node",
+  "npm": true
+}
