@@ -4,7 +4,7 @@ Web component that retrieves data
 
 ## Build & run instructions
 
-Frist clone and change into this project directory.
+First clone and change into this project directory.
 
 Then run:
 
