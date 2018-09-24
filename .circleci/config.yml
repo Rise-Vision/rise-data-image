@@ -1,9 +1,21 @@
 version: 2
 
 jobs:
-  install:
+  preconditions:
     docker: &BUILDIMAGE
       - image: jenkinsrise/cci-v2-components:0.0.4
+    steps:
+      - run: |
+          if [ -z "$COMPONENT_KEY" ]
+          then
+            echo Component key must be specified as an environment variable
+            echo Do not include 'rise-' prefix.
+            echo For example, rise-data-image should be data-image
+            exit 1
+          fi
+
+  install:
+    docker: *BUILDIMAGE
     steps:
       - checkout
       - restore_cache:
@@ -55,7 +67,15 @@ jobs:
           key: node-cache-{{ checksum "package.json" }}
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
-      - run: echo stage $(cat version-string/version)
+      - run: |
+        BUCKET_NAME=rise-$COMPONENT_KEY
+        GS_BASE=gs://widgets.risevision.com
+        VERSION=$(cat version-string/version)
+        TARGET=$GS_BASE/staging/components//$VERSION/
+        echo Deploying version $VERSION to $BUCKET_NAME
+        echo gsutil cp src/ $TARGET
+        echo gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
+        echo gsutil acl -r ch -u AllUsers:R $TARGET
 
   deploy-beta:
     docker: *GCSIMAGE
@@ -85,15 +105,22 @@ workflows:
   version: 2
   workflow1:
     jobs:
-      - install
+      - preconditions
+      - install:
+          requires:
+            - preconditions
       - gcloud-setup:
+          requires:
+            - preconditions
           filters:
             branches:
               only:
                 - /^(stage|staging)[/].*/
                 - master
                 - build/stable
-      - generate-version
+      - generate-version:
+          requires:
+            - preconditions
       - test:
           requires:
             - install
@@ -106,6 +133,8 @@ workflows:
             branches:
               only:
                 - /^(stage|staging)[/].*/
+                - master
+                - build/stable
       - deploy-beta:
           requires:
             - gcloud-setup
