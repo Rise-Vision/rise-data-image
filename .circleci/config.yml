@@ -38,7 +38,8 @@ jobs:
   generate-version:
     docker: *BUILDIMAGE
     steps:
-      - run: echo $(date +%Y.%m.%d.%H.%M) >version-string/version
+      - run: mkdir version-string
+      - run: echo $(date +%Y.%m.%d.%H.%M) > version-string/version
       - persist_to_workspace:
           root: .
           paths:
