@@ -55,7 +55,7 @@ jobs:
           key: node-cache-{{ checksum "package.json" }}
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
-      - run: echo stage $(cat /tmp/shared-workspace/version-string/version)
+      - run: echo stage $(cat version-string/version)
 
   deploy-beta:
     docker: *GCSIMAGE
@@ -67,7 +67,7 @@ jobs:
           key: node-cache-{{ checksum "package.json" }}
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
-      - run: echo beta $(cat /tmp/shared-workspace/version-string/version)
+      - run: echo beta $(cat version-string/version)
 
   deploy-stable:
     docker: *GCSIMAGE
@@ -79,7 +79,7 @@ jobs:
           key: node-cache-{{ checksum "package.json" }}
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
-      - run: echo stable $(cat /tmp/shared-workspace/version-string/version)
+      - run: echo stable $(cat version-string/version)
 
 workflows:
   version: 2
