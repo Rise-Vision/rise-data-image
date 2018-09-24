@@ -22,7 +22,8 @@ jobs:
       - run: npm test
 
   gcloud-setup:
-    docker: *BUILDIMAGE
+    docker: &GCSIMAGE
+      - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
     steps:
       - run: mkdir -p ~/.ssh
       - run: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
@@ -34,35 +35,50 @@ jobs:
           paths:
             - gcloud
 
-  deploy-stage:
+  generate-version:
     docker: *BUILDIMAGE
+    steps:
+      - run: echo $(date +%Y.%m.%d.%H.%M) >version-string/version
+      - persist_to_workspace:
+          root: .
+          paths:
+            - version-string
+
+  deploy-stage:
+    docker: *GCSIMAGE
     steps:
       - checkout
       - attach_workspace:
           at: .
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
-      - run: echo stage
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: echo stage $(cat /tmp/shared-workspace/version-string/version)
 
   deploy-beta:
-    docker: *BUILDIMAGE
+    docker: *GCSIMAGE
     steps:
       - checkout
       - attach_workspace:
           at: .
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
-      - run: echo beta
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: echo beta $(cat /tmp/shared-workspace/version-string/version)
 
   deploy-stable:
-    docker: *BUILDIMAGE
+    docker: *GCSIMAGE
     steps:
       - checkout
       - attach_workspace:
           at: .
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
-      - run: echo stable
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: echo stable $(cat /tmp/shared-workspace/version-string/version)
 
 workflows:
   version: 2
@@ -76,12 +92,14 @@ workflows:
                 - /^(stage|staging)[/].*/
                 - master
                 - build/stable
+      - generate-version
       - test:
           requires:
             - install
       - deploy-stage:
           requires:
             - gcloud-setup
+            - generate-version
             - test
           filters:
             branches:
@@ -90,6 +108,7 @@ workflows:
       - deploy-beta:
           requires:
             - gcloud-setup
+            - generate-version
             - test
           filters:
             branches:
@@ -98,6 +117,7 @@ workflows:
       - deploy-stable:
           requires:
             - gcloud-setup
+            - generate-version
             - test
           filters:
             branches:
