@@ -22,8 +22,7 @@ jobs:
       - run: npm test
 
   gcloud-setup:
-    docker: &GCSIMAGE
-      - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
+    docker: *BUILDIMAGE
     steps:
       - run: mkdir -p ~/.ssh
       - run: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
@@ -46,7 +45,7 @@ jobs:
             - version-string
 
   deploy-stage:
-    docker: *GCSIMAGE
+    docker: *BUILDIMAGE
     steps:
       - checkout
       - attach_workspace:
@@ -58,7 +57,7 @@ jobs:
       - run: echo stage $(cat version-string/version)
 
   deploy-beta:
-    docker: *GCSIMAGE
+    docker: *BUILDIMAGE
     steps:
       - checkout
       - attach_workspace:
@@ -70,7 +69,7 @@ jobs:
       - run: echo beta $(cat version-string/version)
 
   deploy-stable:
-    docker: *GCSIMAGE
+    docker: *BUILDIMAGE
     steps:
       - checkout
       - attach_workspace:
