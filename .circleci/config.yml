@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  install:
     docker: &BUILDIMAGE
       - image: jenkinsrise/cci-v2-components:0.0.4
     steps:
@@ -21,11 +21,85 @@ jobs:
           key: node-cache-{{ checksum "package.json" }}
       - run: npm test
 
+  gcloud-setup:
+    docker: *BUILDIMAGE
+    steps:
+      - run: mkdir -p ~/.ssh
+      - run: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+      - run: git clone git@github.com:Rise-Vision/private-keys.git
+      - run: mv private-keys ..
+      - run: gcloud auth activate-service-account 452091732215@developer.gserviceaccount.com --key-file ../private-keys/storage-server/rva-media-library-ce0d2bd78b54.json
+      - persist_to_workspace:
+          root: ~/.config
+          paths:
+            - gcloud
+
+  deploy-stage:
+    docker: *BUILDIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: echo stage
+
+  deploy-beta:
+    docker: *BUILDIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: echo beta
+
+  deploy-stable:
+    docker: *BUILDIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: echo stable
+
 workflows:
   version: 2
   workflow1:
     jobs:
-      - build
+      - install
+      - gcloud-setup:
+          filters:
+            branches:
+              only:
+                - /^(stage|staging)[/].*/
+                - master
+                - build/stable
       - test:
           requires:
-            - build
+            - install
+      - deploy-stage:
+          requires:
+            - gcloud-setup
+            - test
+          filters:
+            branches:
+              only:
+                - /^(stage|staging)[/].*/
+      - deploy-beta:
+          requires:
+            - gcloud-setup
+            - test
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-stable:
+          requires:
+            - gcloud-setup
+            - test
+          filters:
+            branches:
+              only:
+                - build/stable
