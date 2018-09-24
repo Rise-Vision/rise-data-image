@@ -68,11 +68,11 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          BUCKET_NAME=rise-$COMPONENT_KEY
+          COMPONENT_NAME=rise-$COMPONENT_KEY
           GS_BASE=gs://widgets.risevision.com
           VERSION=$(cat version-string/version)
-          TARGET=$GS_BASE/staging/components//$VERSION/
-          echo Deploying version $VERSION to $BUCKET_NAME
+          TARGET=$GS_BASE/staging/components/$COMPONENT_NAME/$VERSION/
+          echo Deploying version $VERSION to $COMPONENT_NAME
           echo gsutil cp src/$COMPONENT_KEY.js $TARGET
           echo gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           echo gsutil acl -r ch -u AllUsers:R $TARGET
