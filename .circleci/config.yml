@@ -8,9 +8,9 @@ jobs:
       - run: |
           if [ -z "$COMPONENT_KEY" ]
           then
-            echo Component key must be specified as an environment variable
+            echo Component key must be specified as an environment variable.
             echo Do not include 'rise-' prefix.
-            echo For example, rise-data-image should be data-image
+            echo For example, component key for rise-data-image should be data-image
             exit 1
           fi
 
