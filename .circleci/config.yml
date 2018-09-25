@@ -6,11 +6,9 @@ jobs:
       - image: jenkinsrise/cci-v2-components:0.0.4
     steps:
       - run: |
-          if [ -z "$COMPONENT_KEY" ]
+          if [ -z "$COMPONENT_NAME" ]
           then
-            echo Component key must be specified as an environment variable.
-            echo Do not include 'rise-' prefix.
-            echo For example, component key for rise-data-image should be data-image
+            echo Component name must be specified as an environment variable.
             exit 1
           fi
 
@@ -40,7 +38,7 @@ jobs:
       - checkout
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
-      - run: cp -r src build
+      - run: polymer build
       - persist_to_workspace:
           root: .
           paths:
@@ -81,12 +79,11 @@ jobs:
       - run: mkdir -p ~/.config
       - run: cp -r gcloud ~/.config
       - run: |
-          COMPONENT_NAME=rise-$COMPONENT_KEY
           GS_BASE=gs://widgets.risevision.com
           VERSION=$(cat version-string/version)
           TARGET=$GS_BASE/staging/components/$COMPONENT_NAME/$VERSION/
           echo Deploying version $VERSION to $COMPONENT_NAME
-          gsutil cp build/$COMPONENT_NAME.js $TARGET
+          gsutil cp build/prod/src/$COMPONENT_NAME.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil acl -r ch -u AllUsers:R $TARGET
 
