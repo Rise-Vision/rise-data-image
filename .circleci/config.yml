@@ -40,11 +40,11 @@ jobs:
       - checkout
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
-      - run: cp -r src dist
+      - run: cp -r src build
       - persist_to_workspace:
           root: .
           paths:
-            - dist
+            - build
 
   gcloud-setup:
     docker: &GCSIMAGE
@@ -86,7 +86,7 @@ jobs:
           VERSION=$(cat version-string/version)
           TARGET=$GS_BASE/staging/components/$COMPONENT_NAME/$VERSION/
           echo Deploying version $VERSION to $COMPONENT_NAME
-          gsutil cp dist/$COMPONENT_NAME.js $TARGET
+          gsutil cp build/$COMPONENT_NAME.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil acl -r ch -u AllUsers:R $TARGET
 
