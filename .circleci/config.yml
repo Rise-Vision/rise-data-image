@@ -134,6 +134,11 @@ workflows:
       - generate-version:
           requires:
             - preconditions
+          branches:
+            only:
+              - /^(stage|staging)[/].*/
+              - master
+              - build/stable
       - test:
           requires:
             - install
