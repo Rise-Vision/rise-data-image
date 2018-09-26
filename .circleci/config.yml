@@ -1,16 +1,174 @@
 version: 2
 
 jobs:
-  build_and_test:
+  preconditions:
     docker: &BUILDIMAGE
       - image: jenkinsrise/cci-v2-components:0.0.4
     steps:
+      - run: |
+          if [ -z "$COMPONENT_NAME" ]
+          then
+            echo Component name must be specified as an environment variable.
+            exit 1
+          fi
+
+  install:
+    docker: *BUILDIMAGE
+    steps:
       - checkout
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
       - run: npm install
+      - save_cache:
+          key: node-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+
+  test:
+    docker: *BUILDIMAGE
+    steps:
+      - checkout
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
       - run: npm test
+
+  build:
+    docker: *BUILDIMAGE
+    steps:
+      - checkout
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: polymer build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+
+  gcloud-setup:
+    docker: &GCSIMAGE
+      - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
+    steps:
+      - run: mkdir -p ~/.ssh
+      - run: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+      - run: git clone git@github.com:Rise-Vision/private-keys.git
+      - run: mv private-keys ..
+      - run: gcloud auth activate-service-account 452091732215@developer.gserviceaccount.com --key-file ../private-keys/storage-server/rva-media-library-ce0d2bd78b54.json
+      - persist_to_workspace:
+          root: ~/.config
+          paths:
+            - gcloud
+
+  generate-version:
+    docker: *BUILDIMAGE
+    steps:
+      - run: mkdir version-string
+      - run: echo $(date +%Y.%m.%d.%H.%M) > version-string/version
+      - persist_to_workspace:
+          root: .
+          paths:
+            - version-string
+
+  deploy-stage:
+    docker: *GCSIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: |
+          GS_BASE=gs://widgets.risevision.com
+          VERSION=$(cat version-string/version)
+          TARGET=$GS_BASE/staging/components/$COMPONENT_NAME/$VERSION/
+          echo Deploying version $VERSION to $COMPONENT_NAME
+          gsutil cp build/prod/src/$COMPONENT_NAME.js $TARGET
+          gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
+          gsutil acl -r ch -u AllUsers:R $TARGET
+
+  deploy-beta:
+    docker: *GCSIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: echo beta $(cat version-string/version)
+
+  deploy-stable:
+    docker: *GCSIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: echo stable $(cat version-string/version)
 
 workflows:
   version: 2
   workflow1:
     jobs:
-      - build_and_test
+      - preconditions
+      - install:
+          requires:
+            - preconditions
+      - gcloud-setup:
+          requires:
+            - preconditions
+          filters:
+            branches:
+              only:
+                - /^(stage|staging)[/].*/
+                - master
+                - build/stable
+      - generate-version:
+          requires:
+            - preconditions
+          filters:
+            branches:
+              only:
+                - /^(stage|staging)[/].*/
+                - master
+                - build/stable
+      - test:
+          requires:
+            - install
+      - build:
+          requires:
+            - test
+      - deploy-stage:
+          requires:
+            - gcloud-setup
+            - generate-version
+            - build
+          filters:
+            branches:
+              only:
+                - /^(stage|staging)[/].*/
+                - master
+                - build/stable
+      - deploy-beta:
+          requires:
+            - gcloud-setup
+            - generate-version
+            - build
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-stable:
+          requires:
+            - gcloud-setup
+            - generate-version
+            - build
+          filters:
+            branches:
+              only:
+                - build/stable

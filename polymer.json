@@ -6,9 +6,7 @@
   "builds": [
     {
       "name": "prod",
-      "preset": "es6-bundled",
-      "js": {"minify": true},
-      "css": {"minify": true}
+      "js": {"minify": true}
     }
   ],
   "moduleResolution": "node",
