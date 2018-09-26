@@ -43,15 +43,15 @@ jobs:
       - run:
           name: extract component's code from bundle
           command: |
-            cat build/prod/src/$COMPONENT_NAME.js | sed -nr '/RISE_COMPONENT/,/<.head>/{
+            cat build/prod/html/index.html | sed -nr '/RISE_COMPONENT/,/<.head>/{
               /(RISE_COMPONENT|<.head>)/d;
               s/<script>define/define/;
               s/;<.script>/;/;
               p
-            }' > dist/$COMPONENT_NAME.extracted.js
+            }' > extracted.js
       - run:
           name: minify component script once it has been extracted
-          command: ./node_modules/.bin/uglifyjs dist/$COMPONENT_NAME.extracted.js --output dist/$COMPONENT_NAME.js
+          command: ./node_modules/.bin/uglifyjs extracted.js --output dist/$COMPONENT_NAME.js
       - persist_to_workspace:
           root: .
           paths:
