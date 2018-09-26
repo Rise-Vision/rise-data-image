@@ -39,10 +39,23 @@ jobs:
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
       - run: polymer build
+      - run: mkdir dist
+      - run:
+          name: extract component's code from bundle
+          command: |
+            cat build/prod/src/$COMPONENT_NAME.js | sed -nr '/RISE_COMPONENT/,/<.head>/{
+              /(RISE_COMPONENT|<.head>)/d;
+              s/<script>define/define/;
+              s/;<.script>/;/;
+              p
+            }' > dist/$COMPONENT_NAME.extracted.js
+      - run:
+          name: minify component script once it has been extracted
+          command: ./node_modules/.bin/uglifyjs dist/$COMPONENT_NAME.extracted.js --output dist/$COMPONENT_NAME.js
       - persist_to_workspace:
           root: .
           paths:
-            - build
+            - dist
 
   gcloud-setup:
     docker: &GCSIMAGE
@@ -83,7 +96,7 @@ jobs:
           VERSION=$(cat version-string/version)
           TARGET=$GS_BASE/staging/components/$COMPONENT_NAME/$VERSION/
           echo Deploying version $VERSION to $COMPONENT_NAME
-          gsutil cp build/prod/src/$COMPONENT_NAME.js $TARGET
+          gsutil cp dist/$COMPONENT_NAME.js $TARGET
           gsutil -m setmeta -r -h "Cache-Control:private, max-age=0" $TARGET
           gsutil acl -r ch -u AllUsers:R $TARGET
 
