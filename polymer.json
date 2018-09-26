@@ -9,9 +9,9 @@
       "name": "prod",
       "preset": "es5-bundled",
       "addServiceWorker": false,
-      "html": { "minify": false },
-      "css": { "minify": false },
-      "js": { "minify": false },
+      "html": { "minify": true },
+      "css": { "minify": true },
+      "js": { "minify": true },
       "bundle": {
         "inlineScripts": true,
         "stripComments": true
