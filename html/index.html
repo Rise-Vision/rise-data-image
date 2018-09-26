@@ -1,0 +1,22 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js" async></script>
+    <script type="module">
+      import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+
+      // Basic noop element that helps forcing shared bundle file creation.
+      class RiseEnabler extends PolymerElement {
+      }
+    </script>
+    <!--#RISE_COMPONENT do not delete this comment, is used by extraction tools-->
+    <script src="../src/rise-data-image.js" type="module"></script>
+  </head>
+  <body>
+    This file was created just to enable the build.
+  </body>
+</html>
