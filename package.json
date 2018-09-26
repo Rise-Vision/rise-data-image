@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "eslint": "^5.5.0",
+    "uglify-js": "^3.4.9",
     "wct-browser-legacy": "^1.0.1"
   }
 }
