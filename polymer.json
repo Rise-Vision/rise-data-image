@@ -6,7 +6,12 @@
   "builds": [
     {
       "name": "prod",
-      "js": {"minify": true}
+      "preset": "es5-bundled",
+      "addServiceWorker": false,
+      "html": { "minify": false },
+      "css": { "minify": false },
+      "js": { "minify": false },
+      "bundle": { "stripComments": true }
     }
   ],
   "moduleResolution": "node",

@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js" async></script>
+    <script type="module">
+      import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+
+      // Basic noop element that helps forcing shared bundle file creation.
+      class RiseEnabler extends PolymerElement {
+      }
+
+      customElements.define('rise-enabler', RiseEnabler);
+    </script>
     <script src="src/rise-data-image.js" type="module"></script>
   </head>
   <body>

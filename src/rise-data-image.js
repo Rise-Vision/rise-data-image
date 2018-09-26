@@ -15,13 +15,12 @@ class RiseDataImage extends PolymerElement {
   constructor() {
     super();
 
-    setInterval(() => this.toggleImage(this), 5000);
+    setTimeout(() => this.loadImage(this), 5000);
   }
 
-  toggleImage(element) {
-    element.url = `/content/${
-      element.url.endsWith('logo.svg') ? 'schedules-icon.png' : 'logo.svg'
-    }`;
+  loadImage(element) {
+    // fixed for now, URL will be read from local-storage in a later POC
+    element.url = '/content/logo.svg';
 
     const event = new CustomEvent('url-updated', {
       bubbles: true, composed: true, detail: { url: element.url }
