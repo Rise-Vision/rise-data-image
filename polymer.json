@@ -1,4 +1,5 @@
 {
+  "entrypoint": "html/index.html",
   "extraDependencies": [
     "node_modules/@polymer/polymer/**",
     "node_modules/@webcomponents/webcomponentsjs/**"
@@ -11,7 +12,10 @@
       "html": { "minify": false },
       "css": { "minify": false },
       "js": { "minify": false },
-      "bundle": { "stripComments": true }
+      "bundle": {
+        "inlineScripts": true,
+        "stripComments": true
+      }
     }
   ],
   "moduleResolution": "node",
