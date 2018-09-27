@@ -38,11 +38,7 @@ jobs:
       - checkout
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
-      - run: polymer build
-      - run: mkdir dist
-      - run:
-          name: extract component's code from bundle
-          command: cat build/prod/html/index.html | perl -pe 's!.*<script>(.*$COMPONENT_NAME.*)</script>.*!$1!' > dist/$COMPONENT_NAME.js
+      - run: npm run build
       - persist_to_workspace:
           root: .
           paths:
