@@ -21,19 +21,34 @@ class RiseDataImage extends PolymerElement {
 
     this.file = this.getAttribute('file');
 
-    setTimeout(() => this.loadImage(this), 5000);
+    this.watch(this.file, message => this.handleUpdate(message));
   }
 
-  loadImage(element) {
-    // fixed for now, URL will be read from local-storage in a later POC
-    element.url = element.file;
+  handleUpdate(message) {
+    if (!message.fileUrl) {
+      // file doesn't exist or deleted, handle this
+
+      return;
+    }
+
+    this.loadImage(message.fileUrl);
+  }
+
+  loadImage(url) {
+    this.url = url;
 
     const event = new CustomEvent('url-updated', {
-      bubbles: true, composed: true, detail: { url: element.url }
+      bubbles: true, composed: true, detail: { url }
     });
 
     this.dispatchEvent(event);
   }
+
+  // this will be sent to common-template later
+  watch(filePath, handler) {
+    setTimeout(() => handler({ filePath, fileUrl: this.file }), 5000);
+  }
+
 }
 
 customElements.define('rise-data-image', RiseDataImage);

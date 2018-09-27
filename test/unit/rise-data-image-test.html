@@ -34,6 +34,8 @@
             assert(event.detail.url);
             assert.equal(event.detail.url, SAMPLE_URL);
 
+            assert.equal(element.url, SAMPLE_URL);
+
             done();
           });
         });
