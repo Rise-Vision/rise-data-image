@@ -1,17 +1,19 @@
 mkdir -p dist
 
-cat build/prod/html/index.html | perl -pe 's!.*<script>(.*'$1'.*)</script>.*!$1!' > dist/$1.js
+COMPONENT_SOURCE=dist/$1.js
 
-if [ $(wc -l < dist/$1.js) -gt 1 ]
+cat build/prod/html/index.html | perl -pe 's!.*<script>(.*'$1'.*)</script>.*!$1!' > $COMPONENT_SOURCE
+
+if [ $(wc -l < $COMPONENT_SOURCE) -gt 1 ]
 then
-  echo malformed output script - too many lines
+  echo malformed output script - too many lines >&2
 
   exit 1
 fi
 
-if [ $(grep -c '^define' dist/$1.js) -eq 0 ]
+if [ $(grep -c '^define' $COMPONENT_SOURCE) -eq 0 ]
 then
-  echo malformed output script - not JavaScript transpiled code
+  echo malformed output script - not JavaScript transpiled code >&2
 
   exit 1
 fi
