@@ -11,7 +11,7 @@
   "license": "GPL-3.0+",
   "scripts": {
     "build": "polymer build && ./extract_code.sh rise-data-image",
-    "test": "eslint . && polymer test --npm"
+    "test": "eslint src && eslint test && polymer test --npm"
   },
   "dependencies": {
     "@polymer/polymer": "^3.0.5",
