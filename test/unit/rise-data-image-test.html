@@ -12,18 +12,30 @@
   <body>
     <test-fixture id="test-block">
       <template>
-        <rise-data-image></rise-data-image>
+        <rise-data-image file="https://storage.googleapis.com/risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png">
+        </rise-data-image>
       </template>
     </test-fixture>
 
     <script>
       suite('rise-data-image', () => {
+        const SAMPLE_URL =
+          'https://storage.googleapis.com/risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png';
         let element;
 
         setup(() => element = fixture('test-block'));
 
-        test('it should exist', () => {
-          assert(element);
+        test('it should have a property file', () => {
+          assert.equal(element.file, SAMPLE_URL);
+        });
+
+        test('it should send an URL updated event', done => {
+          element.addEventListener('url-updated', event => {
+            assert(event.detail.url);
+            assert.equal(event.detail.url, SAMPLE_URL);
+
+            done();
+          });
         });
       });
     </script>
