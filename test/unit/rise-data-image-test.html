@@ -7,6 +7,24 @@
 
     <script src="../../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../node_modules/wct-browser-legacy/browser.js"></script>
+    <script>
+      const SAMPLE_URL =
+        'https://storage.googleapis.com/risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png';
+
+      RisePlayerConfiguration = {
+        LocalMessaging: {
+          broadcastMessage: () => {},
+          receiveMessages: handler => {
+            setTimeout(() => handler({
+              topic: "FILE-UPDATE",
+              filePath: SAMPLE_URL,
+              status: "CURRENT",
+              osurl: SAMPLE_URL
+            }), 1000);
+          }
+        }
+      };
+    </script>
     <script src="../../src/rise-data-image.js" type="module"></script>
   </head>
   <body>
@@ -19,8 +37,6 @@
 
     <script>
       suite('rise-data-image', () => {
-        const SAMPLE_URL =
-          'https://storage.googleapis.com/risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png';
         let element;
 
         setup(() => element = fixture('test-block'));
