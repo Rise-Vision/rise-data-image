@@ -53,6 +53,10 @@
           element = fixture('test-block');
         });
 
+        teardown(() => {
+          RisePlayerConfiguration.LocalStorage = {};
+        });
+
         test('it should have a property file', () => {
           assert.equal(element.file, SAMPLE_PATH);
         });
