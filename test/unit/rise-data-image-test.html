@@ -11,21 +11,7 @@
       const SAMPLE_PATH = 'risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png';
       const SAMPLE_URL = `https://storage.googleapis.com/${ SAMPLE_PATH }`;
 
-      RisePlayerConfiguration = {
-        LocalMessaging: {
-          broadcastMessage: () => {},
-          receiveMessages: handler => {
-            setTimeout(() =>
-              handler({
-                topic: "FILE-UPDATE",
-                filePath: SAMPLE_URL,
-                status: "CURRENT",
-                osurl: SAMPLE_URL
-              }), 1000
-            );
-          }
-        }
-      };
+      RisePlayerConfiguration = {};
     </script>
     <script src="../../src/rise-data-image.js" type="module"></script>
   </head>
