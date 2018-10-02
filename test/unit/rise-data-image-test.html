@@ -62,11 +62,83 @@
         });
 
         test('it should send an URL updated event if an image is available', done => {
-          element.addEventListener('url-updated', event => {
+          element.addEventListener('image-url-updated', event => {
             assert(event.detail.url);
             assert.equal(event.detail.url, SAMPLE_URL);
 
             assert.equal(element.url, SAMPLE_URL);
+
+            done();
+          });
+        });
+      });
+    </script>
+
+    <script>
+      suite('rise-data-image image not available', () => {
+        let element;
+
+        setup(() => {
+          RisePlayerConfiguration.LocalStorage = {
+            watchSingleFile: (file, handler) => {
+              setTimeout(
+                () => handler({ available: false }), 1000
+              );
+            }
+          };
+
+          element = fixture('test-block');
+        });
+
+        teardown(() => {
+          RisePlayerConfiguration.LocalStorage = {};
+        });
+
+        test('it should send an image not available event if an image is not available', done => {
+          element.addEventListener('image-not-available', event => {
+            assert(!event.detail.url);
+            assert(!element.url);
+
+            done();
+          });
+        });
+      });
+    </script>
+
+    <script>
+      suite('rise-data-image image error', () => {
+        let element;
+
+        setup(() => {
+          RisePlayerConfiguration.LocalStorage = {
+            watchSingleFile: (file, handler) => {
+              setTimeout(
+                () => handler({
+                  available: false,
+                  error: true,
+                  errorMessage: "image download error",
+                  errorDetail: "network failure"
+                }), 1000
+              );
+            }
+          };
+
+          element = fixture('test-block');
+        });
+
+        teardown(() => {
+          RisePlayerConfiguration.LocalStorage = {};
+        });
+
+        test('it should send an image not available event if an image is not available', done => {
+          element.addEventListener('image-error', event => {
+            assert(!event.detail.url);
+            assert(!element.url);
+
+            assert.deepEqual( event.detail, {
+              errorMessage: "image download error",
+              errorDetail: "network failure"
+            });
 
             done();
           });

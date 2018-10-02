@@ -24,25 +24,30 @@ class RiseDataImage extends PolymerElement {
     // TODO: check license ( JTBD later on this epic )
 
     RisePlayerConfiguration.LocalStorage.watchSingleFile(
-      this.file, message => this.handleUpdate(message)
+      this.file, message => this.handleSingleFileUpdate(message)
     );
   }
 
-  handleUpdate(message) {
+  handleSingleFileUpdate(message) {
     if (!message.available) {
-      // file doesn't exist or deleted, handle this
+      this.url = '';
 
-      return;
+      if (message.error) {
+        return this.sendImageEvent('image-error', {
+          errorMessage: message.errorMessage, errorDetail: message.errorDetail
+        });
+      }
+
+      return this.sendImageEvent('image-not-available');
     }
 
-    this.sendImageUrlUpdatedEvent(message.fileUrl);
+    this.url = message.fileUrl;
+    this.sendImageEvent('image-url-updated', { url: this.url });
   }
 
-  sendImageUrlUpdatedEvent(url) {
-    this.url = url;
-
-    const event = new CustomEvent('url-updated', {
-      bubbles: true, composed: true, detail: { url }
+  sendImageEvent(eventName, detail = {}) {
+    const event = new CustomEvent(eventName, {
+      bubbles: true, composed: true, detail
     });
 
     this.dispatchEvent(event);
