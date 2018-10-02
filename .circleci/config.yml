@@ -155,7 +155,6 @@ workflows:
           filters:
             branches:
               only:
-                - /^(stage|staging)[/].*/
                 - master
       - deploy-production:
           stage: stable
