@@ -8,19 +8,21 @@
     <script src="../../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../../node_modules/wct-browser-legacy/browser.js"></script>
     <script>
-      const SAMPLE_URL =
-        'https://storage.googleapis.com/risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png';
+      const SAMPLE_PATH = 'risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png';
+      const SAMPLE_URL = `https://storage.googleapis.com/${ SAMPLE_PATH }`;
 
       RisePlayerConfiguration = {
         LocalMessaging: {
           broadcastMessage: () => {},
           receiveMessages: handler => {
-            setTimeout(() => handler({
-              topic: "FILE-UPDATE",
-              filePath: SAMPLE_URL,
-              status: "CURRENT",
-              osurl: SAMPLE_URL
-            }), 1000);
+            setTimeout(() =>
+              handler({
+                topic: "FILE-UPDATE",
+                filePath: SAMPLE_URL,
+                status: "CURRENT",
+                osurl: SAMPLE_URL
+              }), 1000
+            );
           }
         }
       };
@@ -30,7 +32,7 @@
   <body>
     <test-fixture id="test-block">
       <template>
-        <rise-data-image file="https://storage.googleapis.com/risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png">
+        <rise-data-image file="risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png">
         </rise-data-image>
       </template>
     </test-fixture>
@@ -39,13 +41,23 @@
       suite('rise-data-image', () => {
         let element;
 
-        setup(() => element = fixture('test-block'));
+        setup(() => {
+          RisePlayerConfiguration.LocalStorage = {
+            watchSingleFile: (file, handler) => {
+              setTimeout(
+                () => handler({ available: true, fileUrl: SAMPLE_URL }), 1000
+              );
+            }
+          };
 
-        test('it should have a property file', () => {
-          assert.equal(element.file, SAMPLE_URL);
+          element = fixture('test-block');
         });
 
-        test('it should send an URL updated event', done => {
+        test('it should have a property file', () => {
+          assert.equal(element.file, SAMPLE_PATH);
+        });
+
+        test('it should send an URL updated event if an image is available', done => {
           element.addEventListener('url-updated', event => {
             assert(event.detail.url);
             assert.equal(event.detail.url, SAMPLE_URL);
