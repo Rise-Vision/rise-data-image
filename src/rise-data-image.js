@@ -29,20 +29,23 @@ class RiseDataImage extends PolymerElement {
   }
 
   handleSingleFileUpdate(message) {
-    if (!message.available) {
-      this.url = '';
-
-      if (message.error) {
-        return this.sendImageEvent('image-error', {
-          errorMessage: message.errorMessage, errorDetail: message.errorDetail
-        });
-      }
-
-      return this.sendImageEvent('image-not-available');
+    if (!message.status) {
+      return;
     }
 
-    this.url = message.fileUrl;
-    this.sendImageEvent('image-url-updated', { url: this.url });
+    this.url = message.fileUrl || '';
+
+    if (message.status === 'FILE-ERROR') {
+      return this.sendImageEvent('image-error', {
+        file: this.file,
+        errorMessage: message.errorMessage,
+        errorDetail: message.errorDetail
+      });
+    }
+
+    this.sendImageEvent('image-status-updated', {
+      file: this.file, url: this.url, status: message.status
+    });
   }
 
   sendImageEvent(eventName, detail = {}) {
