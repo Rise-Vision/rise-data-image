@@ -1,4 +1,4 @@
-/* eslint-disable no-magic-numbers, no-warning-comments */
+/* eslint-disable no-warning-comments */
 
 import { PolymerElement } from '@polymer/polymer/polymer-element.js';
 
