@@ -1,4 +1,4 @@
-/* eslint-disable no-magic-numbers */
+/* eslint-disable no-warning-comments */
 
 import { PolymerElement } from '@polymer/polymer/polymer-element.js';
 
@@ -21,19 +21,41 @@ class RiseDataImage extends PolymerElement {
 
     this.file = this.getAttribute('file');
 
-    setTimeout(() => this.loadImage(this), 5000);
+    // TODO: check license ( JTBD later on this epic )
+
+    RisePlayerConfiguration.LocalStorage.watchSingleFile(
+      this.file, message => this.handleSingleFileUpdate(message)
+    );
   }
 
-  loadImage(element) {
-    // fixed for now, URL will be read from local-storage in a later POC
-    element.url = element.file;
+  handleSingleFileUpdate(message) {
+    if (!message.status) {
+      return;
+    }
 
-    const event = new CustomEvent('url-updated', {
-      bubbles: true, composed: true, detail: { url: element.url }
+    this.url = message.fileUrl || '';
+
+    if (message.status === 'FILE-ERROR') {
+      return this.sendImageEvent('image-error', {
+        file: this.file,
+        errorMessage: message.errorMessage,
+        errorDetail: message.errorDetail
+      });
+    }
+
+    this.sendImageEvent('image-status-updated', {
+      file: this.file, url: this.url, status: message.status
+    });
+  }
+
+  sendImageEvent(eventName, detail = {}) {
+    const event = new CustomEvent(eventName, {
+      bubbles: true, composed: true, detail
     });
 
     this.dispatchEvent(event);
   }
+
 }
 
 customElements.define('rise-data-image', RiseDataImage);
