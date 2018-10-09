@@ -44,6 +44,19 @@ jobs:
           paths:
             - dist
 
+  build-e2e-page:
+    parameters:
+      stage:
+        type: string
+    docker: *BUILDIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: echo build e2e page << parameters.stage >>
+
   gcloud-setup:
     docker: &GCSIMAGE
       - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
@@ -148,6 +161,25 @@ workflows:
       - build:
           requires:
             - test
+      - build-e2e-page:
+          stage: beta
+          name: build-e2e-page-beta
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - /^(stage|staging)[/].*/
+                - master
+      - build-e2e-page:
+          stage: stable
+          name: build-e2e-page-stable
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - build/stable
       - deploy-stage:
           requires:
             - gcloud-setup
@@ -186,6 +218,7 @@ workflows:
           stage: beta
           requires:
             - deploy-beta
+            - build-e2e-page-beta
           filters:
             branches:
               only:
@@ -195,6 +228,7 @@ workflows:
           stage: stable
           requires:
             - deploy-stable
+            - build-e2e-page-stable
           filters:
             branches:
               only:
