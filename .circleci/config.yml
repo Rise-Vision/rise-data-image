@@ -56,6 +56,18 @@ jobs:
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
       - run: echo build e2e page << parameters.stage >>
+      - run: |
+          sed '
+            s/__STAGE__/<< parameters.stage >>/;
+            s/__PLAYER__/electron/;
+            s/__CONNECTION__/websocket/;
+          ' e2e/rise-data-image.html > e2e/rise-data-image-electron.html
+      - run: cp e2e/polymer-e2e-electron.json polymer.json
+      - run: polymer build
+      - persist_to_workspace:
+          root: ./build
+          paths:
+            - base
 
   gcloud-setup:
     docker: &GCSIMAGE
@@ -128,7 +140,7 @@ jobs:
           at: .
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
-      - run: echo e2e << parameters.stage >>
+      - run: ls -l base
 
 workflows:
   workflow1:
@@ -216,6 +228,7 @@ workflows:
                 - build/stable
       - test-e2e:
           stage: beta
+          name: test-e2e-beta
           requires:
             - deploy-beta
             - build-e2e-page-beta
@@ -226,6 +239,7 @@ workflows:
                 - /^(stage|staging)[/].*/
       - test-e2e:
           stage: stable
+          name: test-e2e-stable
           requires:
             - deploy-stable
             - build-e2e-page-stable
