@@ -104,6 +104,19 @@ jobs:
           echo Deploying << parameters.stage >> version of $COMPONENT_NAME
           ./upload_to_gcs.sh $COMPONENT_NAME $TARGET
 
+  test-e2e:
+    parameters:
+      stage:
+        type: string
+    docker: *GCSIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: echo e2e << parameters.stage >>
+
 workflows:
   workflow1:
     jobs:
@@ -156,12 +169,30 @@ workflows:
             branches:
               only:
                 - master
+                - /^(stage|staging)[/].*/
       - deploy-production:
           stage: stable
           requires:
             - gcloud-setup
             - generate-version
             - build
+          filters:
+            branches:
+              only:
+                - build/stable
+      - test-e2e:
+          stage: beta
+          requires:
+            - deploy-production
+          filters:
+            branches:
+              only:
+                - master
+                - /^(stage|staging)[/].*/
+      - test-e2e:
+          stage: stable
+          requires:
+            - deploy-production
           filters:
             branches:
               only:
