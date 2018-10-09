@@ -161,6 +161,7 @@ workflows:
                 - build/stable
       - deploy-production:
           stage: beta
+          name: deploy-beta
           requires:
             - gcloud-setup
             - generate-version
@@ -172,6 +173,7 @@ workflows:
                 - /^(stage|staging)[/].*/
       - deploy-production:
           stage: stable
+          name: deploy-stable
           requires:
             - gcloud-setup
             - generate-version
@@ -183,7 +185,7 @@ workflows:
       - test-e2e:
           stage: beta
           requires:
-            - deploy-production
+            - deploy-beta
           filters:
             branches:
               only:
@@ -192,7 +194,7 @@ workflows:
       - test-e2e:
           stage: stable
           requires:
-            - deploy-production
+            - deploy-stable
           filters:
             branches:
               only:
