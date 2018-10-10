@@ -10,10 +10,11 @@
   "author": "Rise Vision",
   "license": "GPL-3.0+",
   "scripts": {
-    "build": "polymer build && ./extract_code.sh rise-data-image",
+    "build": "polymer build && ./node_modules/common-component/extract-source.sh rise-data-image",
     "test": "eslint . && polymer test --npm"
   },
   "dependencies": {
+    "common-component": "git://github.com/Rise-Vision/common-component.git#v1.16.1",
     "@polymer/polymer": "^3.0.5",
     "@webcomponents/webcomponentsjs": "^2.1.1"
   },
