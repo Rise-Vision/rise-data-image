@@ -151,8 +151,6 @@ jobs:
 
   test-e2e-electron:
     parameters:
-      stage:
-        type: string
       displayId:
         type: string
     docker: &E2EIMAGE
@@ -282,7 +280,6 @@ workflows:
               only:
                 - build/stable
       - test-e2e-electron:
-          stage: beta
           displayId: 9YP68DHZ4HUJ
           name: test-e2e-electron-beta
           requires:
@@ -293,7 +290,6 @@ workflows:
               only:
                 - master
       - test-e2e-electron:
-          stage: stable
           displayId: U2SQ87Y5QM64
           name: test-e2e-electron-stable
           requires:
