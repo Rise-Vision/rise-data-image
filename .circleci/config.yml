@@ -44,31 +44,6 @@ jobs:
           paths:
             - dist
 
-  build-e2e-page:
-    parameters:
-      stage:
-        type: string
-    docker: *BUILDIMAGE
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - restore_cache:
-          key: node-cache-{{ checksum "package.json" }}
-      - run: echo build e2e page << parameters.stage >>
-      - run: |
-          sed '
-            s/__STAGE__/<< parameters.stage >>/;
-            s/__PLAYER__/electron/;
-            s/__CONNECTION__/websocket/;
-          ' e2e/rise-data-image.html > e2e/rise-data-image-electron.html
-      - run: cp e2e/polymer-e2e-electron.json polymer.json
-      - run: polymer build
-      - persist_to_workspace:
-          root: ./build
-          paths:
-            - base
-
   gcloud-setup:
     docker: &GCSIMAGE
       - image: jenkinsrise/cci-v2-launcher-electron:0.0.6
@@ -95,6 +70,33 @@ jobs:
           paths:
             - version-string
 
+  build-e2e-page:
+    parameters:
+      stage:
+        type: string
+    docker: *BUILDIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: echo build e2e page << parameters.stage >>
+      - run: |
+          VERSION=$(cat version-string/version)
+          sed "
+            s/__STAGE__/<< parameters.stage >>/;
+            s/__VERSION__/$VERSION/;
+            s/__PLAYER__/electron/;
+            s/__CONNECTION__/websocket/;
+          " e2e/rise-data-image.html > e2e/rise-data-image-electron.html
+      - run: cp e2e/polymer-e2e-electron.json polymer.json
+      - run: polymer build
+      - persist_to_workspace:
+          root: ./build
+          paths:
+            - base
+
   deploy-stage:
     docker: *GCSIMAGE
     steps:
@@ -109,24 +111,6 @@ jobs:
           VERSION=$(cat version-string/version)
           TARGET=$WIDGETS_BASE/staging/components/$COMPONENT_NAME/$VERSION/
           echo Deploying version $VERSION to $COMPONENT_NAME
-          node_modules/common-component/deploy-gcs.sh $COMPONENT_NAME $TARGET
-
-  deploy-production:
-    parameters:
-      stage:
-        type: string
-    docker: *GCSIMAGE
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - restore_cache:
-          key: node-cache-{{ checksum "package.json" }}
-      - run: mkdir -p ~/.config
-      - run: cp -r gcloud ~/.config
-      - run: |
-          TARGET=$WIDGETS_BASE/<< parameters.stage >>/components/$COMPONENT_NAME/
-          echo Deploying << parameters.stage >> version of $COMPONENT_NAME
           node_modules/common-component/deploy-gcs.sh $COMPONENT_NAME $TARGET
 
   deploy-e2e-page:
@@ -177,6 +161,24 @@ jobs:
       - store_artifacts:
           path: output
 
+  deploy-production:
+    parameters:
+      stage:
+        type: string
+    docker: *GCSIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-{{ checksum "package.json" }}
+      - run: mkdir -p ~/.config
+      - run: cp -r gcloud ~/.config
+      - run: |
+          TARGET=$WIDGETS_BASE/<< parameters.stage >>/components/$COMPONENT_NAME/
+          echo Deploying << parameters.stage >> version of $COMPONENT_NAME
+          node_modules/common-component/deploy-gcs.sh $COMPONENT_NAME $TARGET
+
 workflows:
   workflow1:
     jobs:
@@ -213,15 +215,18 @@ workflows:
           name: build-e2e-page-beta
           requires:
             - build
+            - generate-version
           filters:
             branches:
               only:
                 - master
+                - /^(stage|staging)[/].*/
       - build-e2e-page:
           stage: stable
           name: build-e2e-page-stable
           requires:
             - build
+            - generate-version
           filters:
             branches:
               only:
@@ -237,28 +242,6 @@ workflows:
                 - /^(stage|staging)[/].*/
                 - master
                 - build/stable
-      - deploy-production:
-          stage: beta
-          name: deploy-beta
-          requires:
-            - gcloud-setup
-            - generate-version
-            - build
-          filters:
-            branches:
-              only:
-                - master
-      - deploy-production:
-          stage: stable
-          name: deploy-stable
-          requires:
-            - gcloud-setup
-            - generate-version
-            - build
-          filters:
-            branches:
-              only:
-                - build/stable
       - deploy-e2e-page:
           stage: beta
           name: deploy-e2e-page-beta
@@ -269,6 +252,7 @@ workflows:
             branches:
               only:
                 - master
+                - /^(stage|staging)[/].*/
       - deploy-e2e-page:
           stage: stable
           name: deploy-e2e-page-stable
@@ -283,18 +267,38 @@ workflows:
           displayId: 9YP68DHZ4HUJ
           name: test-e2e-electron-beta
           requires:
-            - deploy-beta
+            - deploy-stage
             - deploy-e2e-page-beta
           filters:
             branches:
               only:
                 - master
+                - /^(stage|staging)[/].*/
       - test-e2e-electron:
           displayId: U2SQ87Y5QM64
           name: test-e2e-electron-stable
           requires:
-            - deploy-stable
+            - deploy-stage
             - deploy-e2e-page-stable
+          filters:
+            branches:
+              only:
+                - build/stable
+      - deploy-production:
+          stage: beta
+          name: deploy-beta
+          requires:
+            - test-e2e-electron-beta
+          filters:
+            branches:
+              only:
+                - master
+                - /^(stage|staging)[/].*/
+      - deploy-production:
+          stage: stable
+          name: deploy-stable
+          requires:
+            - test-e2e-electron-stable
           filters:
             branches:
               only:

@@ -18,8 +18,15 @@
     <script src="https://widgets.risevision.com/__STAGE__/common/rise-local-messaging.js"></script>
     <script src="https://widgets.risevision.com/__STAGE__/common/rise-helpers.js"></script>
     <script src="https://widgets.risevision.com/__STAGE__/common/rise-local-storage.js"></script>
-    <script src="https://widgets.risevision.com/__STAGE__/common/rise-component-loader.js"></script>
+    <script src="https://widgets.risevision.com/staging/common/2018.10.11.09.00/rise-component-loader.js"></script>
     <script>
+      RisePlayerConfiguration.ComponentLoader.components = [
+        {
+          name: "rise-data-image",
+          url: "https://widgets.risevision.com/staging/components/rise-data-image/__VERSION__/rise-data-image.js"
+        }
+      ];
+
       if (document.domain.indexOf("localhost") === -1) {
         try {
           document.domain = "risevision.com";
