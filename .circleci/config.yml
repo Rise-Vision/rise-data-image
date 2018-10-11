@@ -220,7 +220,6 @@ workflows:
             branches:
               only:
                 - master
-                - /^(stage|staging)[/].*/
       - build-e2e-page:
           stage: stable
           name: build-e2e-page-stable
@@ -252,7 +251,6 @@ workflows:
             branches:
               only:
                 - master
-                - /^(stage|staging)[/].*/
       - deploy-e2e-page:
           stage: stable
           name: deploy-e2e-page-stable
@@ -273,7 +271,6 @@ workflows:
             branches:
               only:
                 - master
-                - /^(stage|staging)[/].*/
       - test-e2e-electron:
           displayId: U2SQ87Y5QM64
           name: test-e2e-electron-stable
@@ -293,7 +290,6 @@ workflows:
             branches:
               only:
                 - master
-                - /^(stage|staging)[/].*/
       - deploy-production:
           stage: stable
           name: deploy-stable
