@@ -148,8 +148,6 @@ jobs:
       - run: git clone https://github.com/Rise-Vision/rise-launcher-electron-e2e.git
       - run: |
           cd rise-launcher-electron-e2e
-          git checkout -b feature/support_beta_player_in_test_display_runner
-          git pull origin feature/support_beta_player_in_test_display_runner
           npm install
       - run: mkdir ~/rvplayer
       - run: echo "displayid=<< parameters.displayId >>" > $PLAYER_CONFIG
