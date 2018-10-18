@@ -10,7 +10,7 @@ npm install -g polymer-cli
 
 ## Build instructions
 
-Create a standalone project using this skeleton.
+Create a standalone project using the contents of this directory as a base.
 
 Then run:
 
@@ -24,7 +24,9 @@ code.
 
 The output is created into the build/prod directory.
 
-## Run instructions, local directory
+## Run instructions
+
+### option a) using a local server
 
 Run a web server from the build/prod directory, for example.
 
@@ -39,15 +41,18 @@ http://localhost:8999/src/rise-data-image-electron.html
 Add a display id to that schedule, and open a local electron player for that
 display id.
 
-The image referenced as the file attribute in the rise-image tag should appear
-after a few seconds. Status messages related to GCS download may appear also
-in the meantime.
+The image referenced as the file attribute in the rise-data-image tag should
+appear after a few seconds. Status messages related to GCS download may appear
+also in the meantime.
 
-## Run instructions, GCS
+### option b) hosting page code on GCS
 
 Alternatively, all the contents of build/prod may be uploaded to GCS,
 with public permissions and no caching; and the schedule may point to the
 published file.
+
+This option is actually better, as it resembles more closely the environment
+the deployed page will run on.
 
 ## Build & run instructions - ChromeOS
 

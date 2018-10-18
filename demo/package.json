@@ -1,7 +1,6 @@
 {
   "name": "rise-data-image-demo",
   "version": "0.0.1",
-  "author": "Santiago Arriaga <santiago.noguez@risevision.com>",
   "license": "GPL-3.0+",
   "dependencies": {
     "@polymer/polymer": "^3.0.5",
