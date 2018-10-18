@@ -1,5 +1,5 @@
 {
-  "entrypoint": "src/rise-data-image-electron.html",
+  "entrypoint": "src/rise-data-image-chromeos.html",
   "extraDependencies": [
     "node_modules/@polymer/polymer/**",
     "node_modules/@webcomponents/webcomponentsjs/**"

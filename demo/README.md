@@ -26,42 +26,64 @@ The output is created into the build/prod directory.
 
 ## Run instructions
 
-### option a) using a local server
+### Option a) Running the ChromeOS app in a local Chrome browser, and GCS.
 
-Run a web server from the build/prod directory, for example.
+This option is the most convenient if one does not want to install a local
+copy of the Electron Player.
 
-```bash
-cd build/es5
-python -m SimpleHTTPServer 8999
-```
+To do this all the contents of build/prod may be uploaded to GCS,
+with public permissions and no caching.
 
-Then configure a schedule pointing to the URL:
-http://localhost:8999/src/rise-data-image-electron.html
+Then create a schedule that points to the published file, for example:
 
-Add a display id to that schedule, and open a local electron player for that
-display id.
+  https://storage.googleapis.com/risemedialibrary-xxxxx-yyyy-xxx/src/rise-data-image-chromeos.html
 
-The image referenced as the file attribute in the rise-data-image tag should
-appear after a few seconds. Status messages related to GCS download may appear
-also in the meantime.
+Then configure the local environment as described in the following document:
 
-### option b) hosting page code on GCS
+  https://docs.google.com/document/d/1xbtDo9GnhbH0lGeQmgTdSb-U5ed0vTjufhxZBV-1C4A/edit
 
-Alternatively, all the contents of build/prod may be uploaded to GCS,
-with public permissions and no caching; and the schedule may point to the
-published file.
+Once the application has been configured and ran, an image referenced as the
+file attribute in the rise-data-image tag should appear after a few seconds.
+Status messages related to GCS download may appear also in the meantime.
 
-This option is actually better, as it resembles more closely the environment
-the deployed page will run on.
+### Option b) Using another local or remote server
 
-## Build & run instructions - ChromeOS
+It's also possible to use a local server or another remote GCS server other
+than Rise Vision Storage, but there is a catch.
 
-Currently, the rise-data-image-electron.html is fixed for Player Electron.
-To build the test page for ChromeOS player one should use the provided file
-rise-data-image-chromeos.html. The procedure is the same that the
-one that was described above for Player Electron, but before building the page
+Running the page on a domain other than risevision.com will result in
+CORS-related errors, due to browser restrictions.
+
+A way to avoid such problems is to map GCS requests to local o remote locations
+using a local proxy server such as Charles - https://www.charlesproxy.com/.
+
+Another way to avoid such problems is to install and test using a local
+installation of Rise Vision Electron Player, which is described in next
+section.
+
+### Option c) Running with Electron Player
+
+Currently, the rise-data-image-chromeos.html is fixed for ChromeOS Player.
+To build the test page for Electron Player one should use the provided file
+rise-data-image-electron.html. Before building the page
 it's necessary to change the following line in polymer.json:
 
 ```
-  "entrypoint": "src/rise-data-image-chromeos.html",
+  "entrypoint": "src/rise-data-image-electron.html",
 ```
+
+Note that the page that runs in player-electron could use GCS, or a local or
+remote server.
+
+For example, to run a web server locally, one could run the following commands:
+
+```bash
+cd build/prod
+python -m SimpleHTTPServer 8999
+```
+
+Then configure the schedule pointing to the URL:
+http://localhost:8999/src/rise-data-image-electron.html
+
+Add a display id to that schedule, and open an Electron Player for that
+display id.
