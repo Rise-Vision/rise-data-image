@@ -1,0 +1,95 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script>
+    <script type="module">
+      // this and the following block are needed at build time to force the creation of the shared bundle script
+      import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+    </script>
+    <script type="module">
+      import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+    </script>
+    <script src="https://widgets.risevision.com/beta/common/config-test.js"></script>
+    <script src="https://widgets.risevision.com/beta/common/rise-player-configuration.js"></script>
+    <script src="https://widgets.risevision.com/beta/common/rise-local-messaging.js"></script>
+    <script src="https://widgets.risevision.com/beta/common/rise-helpers.js"></script>
+    <script src="https://widgets.risevision.com/beta/common/rise-logger.js"></script>
+    <script src="https://widgets.risevision.com/beta/common/rise-local-storage.js"></script>
+    <script src="https://widgets.risevision.com/beta/common/rise-component-loader.js"></script>
+    <script>
+      // remove the following sentence if you are combining rise-data-image with rise-financial beta
+      RisePlayerConfiguration.ComponentLoader.components = [
+        {
+          name: "rise-data-image",
+          url: "https://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"
+        }
+      ];
+
+      if (document.domain.indexOf("localhost") === -1) {
+        try {
+          document.domain = "risevision.com";
+        } catch (err) {
+          // can't set document.domain, risevision.com not an accepted suffix of current document domain
+          console.log("document.domain can't be set", err);
+        }
+      }
+    </script>
+    <script>
+      function configureComponents(event) {
+        if ( !event.detail.isLoaded ) {
+          console.log( "load process failed" );
+          return;
+        }
+
+        console.log( "manual component configuration" );
+
+        // all of the following will be implemented later by a rise-image component
+        let image01 = document.querySelector('#rise-data-image-01');
+        image01.addEventListener('image-status-updated', event => {
+          var content = event.detail.status === 'CURRENT' ?
+            `<img src=${ event.detail.url } width="250" height="250">` :
+            `<p>image not available, status: ${ event.detail.status }</p>`
+
+          document.querySelector('#image01').innerHTML = content;
+        });
+        image01.addEventListener('image-error', event => {
+          document.querySelector('#image01').innerHTML = `
+            <p>image error: ${ event.detail.errorMessage }</p>
+          `;
+        });
+      }
+
+      window.addEventListener( "rise-components-loaded", configureComponents );
+    </script>
+    <script>
+      console.log("configuring");
+
+      // electron / websocket or chromeos / window
+      RisePlayerConfiguration.configure({
+        playerType: "stable",
+        playerVersion: "TEST_VERSION",
+        os: "TEST_OS"
+      }, {
+        player: "electron",
+        connectionType: "websocket",
+        detail: { serverUrl: "http://localhost:8080" }
+      });
+    </script>
+  </head>
+  <body>
+    <rise-data-image id="rise-data-image-01"
+      file="risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png">
+    </rise-data-image>
+
+    <div id="image01">
+      <p>Downloading image, please wait...</p>
+    </div>
+
+    <hr>
+  </body>
+</html>
