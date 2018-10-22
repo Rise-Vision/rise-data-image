@@ -38,6 +38,11 @@ jobs:
       - checkout
       - restore_cache:
           key: node-cache-{{ checksum "package.json" }}
+      - run: |
+          VERSION=$(cat version-string/version)
+          sed -i "
+            s/__VERSION__/$VERSION/;
+          " src/rise-data-image-version.js
       - run: npm run build
       - persist_to_workspace:
           root: .
@@ -211,13 +216,19 @@ workflows:
             - install
       - build:
           requires:
+            - generate-version
             - test
+          filters:
+            branches:
+              only:
+                - /^(stage|staging)[/].*/
+                - master
+                - build/stable
       - build-e2e-page:
           stage: beta
           name: build-e2e-page-beta
           requires:
             - build
-            - generate-version
           filters:
             branches:
               only:
@@ -227,7 +238,6 @@ workflows:
           name: build-e2e-page-stable
           requires:
             - build
-            - generate-version
           filters:
             branches:
               only:
@@ -235,7 +245,6 @@ workflows:
       - deploy-stage:
           requires:
             - gcloud-setup
-            - generate-version
             - build
           filters:
             branches:

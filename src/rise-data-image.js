@@ -1,6 +1,7 @@
 /* eslint-disable no-warning-comments */
 
 import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { version } from "./rise-data-image-version.js";
 
 class RiseDataImage extends PolymerElement {
   static get properties () {
@@ -26,6 +27,7 @@ class RiseDataImage extends PolymerElement {
     RisePlayerConfiguration.LocalStorage.watchSingleFile(
       this.file, message => this.handleSingleFileUpdate(message)
     );
+    console.log("version is: ", version); // eslint-disable-line no-console
   }
 
   handleSingleFileUpdate(message) {
