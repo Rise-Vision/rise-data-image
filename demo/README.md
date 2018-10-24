@@ -44,11 +44,10 @@ Then create a schedule that points to the published file, for example
 
   http://widgets.risevision.com/staging/pages/2018.XX.XX.XX.XX/src/rise-data-image-chromeos.html
 
-Then configure the local environment as described in the following document
-( it's not necessary to point the schedule to a local URL as it's described
-there, with the above URL for the schedule is enough ):
-
-  https://docs.google.com/document/d/1xbtDo9GnhbH0lGeQmgTdSb-U5ed0vTjufhxZBV-1C4A/edit
+Then configure the local environment as described in the
+[Financial Templates First - Local Development](https://docs.google.com/document/d/1xbtDo9GnhbH0lGeQmgTdSb-U5ed0vTjufhxZBV-1C4A/edit)
+document. It's not necessary to point the schedule to a local URL as it's
+described there, with the above URL for the schedule is enough.
 
 Once the application has been configured and ran, an image referenced as the
 file attribute in the rise-data-image tag should appear after a few seconds.
