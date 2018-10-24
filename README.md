@@ -8,20 +8,21 @@ First clone and change into this project directory.
 
 Then run:
 
-`
+```bash
 npm install
 npm install -g polymer-cli
 npm run build
-`
+```
 
-Note: if EPERM errors happen install polymer-cli using the --unsafe-perm flag
-( npm install -g polymer-cli --unsafe-perm ) and/or using sudo.
+**Note**: If EPERM errors occur then install polymer-cli using the
+`--unsafe-perm` flag ( `npm install -g polymer-cli --unsafe-perm` ) 
+and/or using sudo.
 
 ## Test instructions
 
-`
+```bash
 npm test
-`
+```
 
 ## Run locally instructions
 
@@ -30,16 +31,16 @@ added to an HTTP server that supports CORS.
 
 A simple HTTP server can be installed like:
 
-`
+```bash
 npm install -g http-server
-`
+```
 
 Then change to the directory and run the server with CORS enabled:
 
-`
+```bash
 cd dist
 http-server -p 9030 --cors
-`
+```
 
 Then reference this file from the image-remote-transpiled.html file following
 instructions on:
@@ -56,11 +57,11 @@ The component must have a 'file' attribute with a valid GCS file path.
 
 Example:
 
-`
+```html
 <rise-data-image id="rise-data-image-01"
   file="risemedialibrary-xxxxxx-xxxx-xxxx-xxxx-xxxxxxxx/logo.png">
 </rise-data-image>
-`
+```
 
 ## Events
 
