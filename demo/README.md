@@ -39,10 +39,11 @@ To do this all the contents of build/prod may be uploaded to GCS,
 with public permissions and no caching. To avoid CORS issues, the server
 domain of the published file must be risevision.com.
 
-Then create a schedule that points to the published file, for example
-( note that this is an HTTP URL, as ChromeOS currently requires that ):
+Then create a schedule that points to the published file, for example:
 
   http://widgets.risevision.com/staging/pages/2018.XX.XX.XX.XX/src/rise-data-image-chromeos.html
+
+Note that this is an HTTP URL, as ChromeOS currently requires that.
 
 Then configure the local environment as described in the
 [Financial Templates First - Local Development](https://docs.google.com/document/d/1xbtDo9GnhbH0lGeQmgTdSb-U5ed0vTjufhxZBV-1C4A/edit)
