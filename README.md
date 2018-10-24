@@ -14,8 +14,9 @@ npm install -g polymer-cli
 npm run build
 ```
 
-Note: if EPERM errors happen install polymer-cli using the --unsafe-perm flag
-( npm install -g polymer-cli --unsafe-perm ) and/or using sudo.
+**Note**: If EPERM errors occur then install polymer-cli using the
+`--unsafe-perm` flag ( `npm install -g polymer-cli --unsafe-perm` ) 
+and/or using sudo.
 
 ## Test instructions
 
