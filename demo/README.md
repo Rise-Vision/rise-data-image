@@ -36,15 +36,19 @@ This option is the most convenient if one does not want to install a local
 copy of the Electron Player.
 
 To do this all the contents of build/prod may be uploaded to GCS,
-with public permissions and no caching.
+with public permissions and no caching. To avoid CORS issues, the server
+domain of the published file must be risevision.com.
 
 Then create a schedule that points to the published file, for example:
 
-  https://storage.googleapis.com/risemedialibrary-xxxxx-yyyy-xxx/src/rise-data-image-chromeos.html
+  http://widgets.risevision.com/staging/pages/2018.XX.XX.XX.XX/src/rise-data-image-chromeos.html
 
-Then configure the local environment as described in the following document:
+Note that this is an HTTP URL, as ChromeOS currently requires that.
 
-  https://docs.google.com/document/d/1xbtDo9GnhbH0lGeQmgTdSb-U5ed0vTjufhxZBV-1C4A/edit
+Then configure the local environment as described in the
+[Financial Templates First - Local Development](https://docs.google.com/document/d/1xbtDo9GnhbH0lGeQmgTdSb-U5ed0vTjufhxZBV-1C4A/edit)
+document. It's not necessary to point the schedule to a local URL as it's
+described there, with the above URL for the schedule is enough.
 
 Once the application has been configured and ran, an image referenced as the
 file attribute in the rise-data-image tag should appear after a few seconds.
