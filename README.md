@@ -1,6 +1,9 @@
 # rise-data-image
 
-Web component that retrieves image data
+Web component that retrieves image data.
+
+Instructions for demo page here:
+https://github.com/Rise-Vision/rise-data-image/blob/master/demo/README.md
 
 ## Build instructions
 
@@ -15,7 +18,7 @@ npm run build
 ```
 
 **Note**: If EPERM errors occur then install polymer-cli using the
-`--unsafe-perm` flag ( `npm install -g polymer-cli --unsafe-perm` ) 
+`--unsafe-perm` flag ( `npm install -g polymer-cli --unsafe-perm` )
 and/or using sudo.
 
 ## Test instructions
