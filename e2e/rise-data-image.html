@@ -55,7 +55,9 @@
           `;
         });
 
-        image01.dispatchEvent( new CustomEvent( "start" ) );
+        setTimeout(function() {
+          image01.dispatchEvent( new CustomEvent( "start" ) );
+        }, 1000);
       }
 
       function fetchAndConfigureComponents(event) {
