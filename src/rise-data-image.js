@@ -17,6 +17,15 @@ class RiseDataImage extends PolymerElement {
     };
   }
 
+  // Event name constants
+  static get EVENT_IMAGE_ERROR() {
+    return "image-error";
+  }
+
+  static get EVENT_IMAGE_STATUS_UPDATED() {
+    return "image-status-updated";
+  }
+
   constructor() {
     super();
 
@@ -38,14 +47,14 @@ class RiseDataImage extends PolymerElement {
     this.url = message.fileUrl || '';
 
     if (message.status === 'FILE-ERROR') {
-      return this.sendImageEvent('image-error', {
+      return this.sendImageEvent(RiseDataImage.EVENT_IMAGE_ERROR, {
         file: this.file,
         errorMessage: message.errorMessage,
         errorDetail: message.errorDetail
       });
     }
 
-    this.sendImageEvent('image-status-updated', {
+    this.sendImageEvent(RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, {
       file: this.file, url: this.url, status: message.status
     });
   }
