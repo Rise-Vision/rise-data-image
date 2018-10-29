@@ -54,6 +54,8 @@
             <p>image error: ${ event.detail.errorMessage }</p>
           `;
         });
+
+        image01.dispatchEvent( new CustomEvent( "start" ) );
       }
 
       function fetchAndConfigureComponents(event) {

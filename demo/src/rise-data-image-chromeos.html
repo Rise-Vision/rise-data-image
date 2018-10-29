@@ -62,6 +62,8 @@
             <p>image error: ${ event.detail.errorMessage }</p>
           `;
         });
+
+        element.dispatchEvent( new CustomEvent( "start" ) );
       }
 
       window.addEventListener( "rise-components-loaded", configureComponents );
