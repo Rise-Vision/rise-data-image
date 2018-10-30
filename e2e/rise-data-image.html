@@ -47,7 +47,14 @@
     <hr>
 
     <script>
-      function configureComponents() {
+      function configureComponents(event) {
+        if ( !event.detail.isLoaded ) {
+          console.log( "load process failed" );
+          return;
+        }
+
+        console.log( "manual component configuration" );
+
         // all of the following will be implemented later by a rise-image component
         let image01 = document.querySelector('#rise-data-image-01');
         image01.addEventListener('image-status-updated', event => {
@@ -69,17 +76,7 @@
         image01.dispatchEvent( new CustomEvent( "start" ) );
       }
 
-      function fetchAndConfigureComponents(event) {
-        if ( !event.detail.isLoaded ) {
-          console.log( "load process failed" );
-          return;
-        }
-
-        console.log( "manual configuration" );
-        configureComponents();
-      }
-
-      window.addEventListener( "rise-components-loaded", fetchAndConfigureComponents );
+      window.addEventListener( "rise-components-loaded", configureComponents );
     </script>
     <script>
       console.log("configuring");
