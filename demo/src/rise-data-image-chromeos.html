@@ -63,9 +63,10 @@
           `;
         });
 
-        setTimeout(function() {
-          image01.dispatchEvent( new CustomEvent( "start" ) );
-        }, 1000);
+        image01.addEventListener('configured', () =>
+          image01.dispatchEvent( new CustomEvent( "start" ) )
+        );
+        image01.dispatchEvent( new CustomEvent( "start" ) );
       }
 
       window.addEventListener( "rise-components-loaded", configureComponents );

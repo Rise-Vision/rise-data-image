@@ -18,6 +18,10 @@ class RiseDataImage extends PolymerElement {
   }
 
   // Event name constants
+  static get EVENT_CONFIGURED() {
+    return "configured";
+  }
+
   static get EVENT_IMAGE_ERROR() {
     return "image-error";
   }
@@ -35,6 +39,7 @@ class RiseDataImage extends PolymerElement {
 
     this.file = this.getAttribute('file');
 
+    this._sendImageEvent(RiseDataImage.EVENT_CONFIGURED);
     this.addEventListener(
       RiseDataImage.EVENT_START,
       () => this._handleStart(),
