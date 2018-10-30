@@ -38,6 +38,10 @@ class RiseDataImage extends PolymerElement {
     super();
 
     this.file = this.getAttribute('file');
+  }
+
+  ready() {
+    super.ready();
 
     this._sendImageEvent(RiseDataImage.EVENT_CONFIGURED);
     this.addEventListener(

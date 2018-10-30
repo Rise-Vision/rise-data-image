@@ -21,13 +21,9 @@
     <script src="https://widgets.risevision.com/__STAGE__/common/rise-logger.js"></script>
     <script src="https://widgets.risevision.com/__STAGE__/common/rise-local-storage.js"></script>
     <script src="https://widgets.risevision.com/__STAGE__/common/rise-component-loader.js"></script>
+    <script src="https://widgets.risevision.com/staging/components/rise-data-image/__VERSION__/rise-data-image.js"></script>
     <script>
-      RisePlayerConfiguration.ComponentLoader.components = [
-        {
-          name: "rise-data-image",
-          url: "https://widgets.risevision.com/staging/components/rise-data-image/__VERSION__/rise-data-image.js"
-        }
-      ];
+      RisePlayerConfiguration.ComponentLoader.components = [];
 
       if (document.domain.indexOf("localhost") === -1) {
         try {
