@@ -231,11 +231,11 @@ workflows:
           name: build-e2e-page-beta
           requires:
             - build
-            - /^(stage|staging)[/].*/
           filters:
             branches:
               only:
                 - master
+                - /^(stage|staging)[/].*/
       - build-e2e-page:
           stage: stable
           name: build-e2e-page-stable
