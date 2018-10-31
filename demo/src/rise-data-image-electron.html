@@ -66,6 +66,10 @@
           `;
         });
 
+        // Start the component once it's configured;
+        // but if it's already configured the listener won't work,
+        // so we directly send the request also.
+        // In the future, we may encapsulate the following lines in a helper function.
         image01.addEventListener('configured', () =>
           image01.dispatchEvent( new CustomEvent( "start" ) )
         );
