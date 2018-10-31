@@ -45,13 +45,12 @@ class RiseDataImage extends PolymerElement {
     console.log("component ready start");
     super.ready();
 
-    console.log("component ready start");
-    this._sendImageEvent(RiseDataImage.EVENT_CONFIGURED);
     this.addEventListener(
       RiseDataImage.EVENT_START,
       () => this._handleStart(),
       { once: true }
     );
+    this._sendImageEvent(RiseDataImage.EVENT_CONFIGURED);
     console.log("component ready end");
   }
 

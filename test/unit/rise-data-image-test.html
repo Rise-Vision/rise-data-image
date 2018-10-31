@@ -58,6 +58,9 @@
             done();
           });
 
+          element.addEventListener('configured', () =>
+            element.dispatchEvent( new CustomEvent( "start" ) )
+          );
           element.dispatchEvent( new CustomEvent( "start" ) );
         });
       });
@@ -94,6 +97,9 @@
             done();
           });
 
+          element.addEventListener('configured', () =>
+            element.dispatchEvent( new CustomEvent( "start" ) )
+          );
           element.dispatchEvent( new CustomEvent( "start" ) );
         });
       });
@@ -137,6 +143,9 @@
             done();
           });
 
+          element.addEventListener('configured', () =>
+            element.dispatchEvent( new CustomEvent( "start" ) )
+          );
           element.dispatchEvent( new CustomEvent( "start" ) );
         });
       });

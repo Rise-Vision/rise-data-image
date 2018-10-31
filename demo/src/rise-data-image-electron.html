@@ -21,7 +21,7 @@
     <script src="https://widgets.risevision.com/beta/common/rise-logger.js"></script>
     <script src="https://widgets.risevision.com/beta/common/rise-local-storage.js"></script>
     <script src="https://widgets.risevision.com/beta/common/rise-component-loader.js"></script>
-    <script src="https://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"></script>
+    <script src="https://widgets.risevision.com/staging/components/rise-data-image/2018.10.31.13.26/rise-data-image.js"></script>
     <script>
       // remove the following sentence if you are combining rise-data-image with rise-financial beta
       RisePlayerConfiguration.ComponentLoader.components = [];
@@ -71,10 +71,13 @@
           `;
         });
 
-        image01.addEventListener('configured', () =>
-          image01.dispatchEvent( new CustomEvent( "start" ) )
-        );
+        console.log("page configure start");
+        image01.addEventListener('configured', () => {
+          console.log("configured received");
+          image01.dispatchEvent( new CustomEvent( "start" ) );
+        });
         image01.dispatchEvent( new CustomEvent( "start" ) );
+        console.log("page configure start");
       }
 
       window.addEventListener( "rise-components-loaded", configureComponents );
