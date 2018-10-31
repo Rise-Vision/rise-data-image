@@ -70,12 +70,10 @@
           `;
         });
 
-        console.log("page configure start");
         image01.addEventListener('configured', () =>
           image01.dispatchEvent( new CustomEvent( "start" ) )
         );
         image01.dispatchEvent( new CustomEvent( "start" ) );
-        console.log("page configure end");
       }
 
       window.addEventListener( "rise-components-loaded", configureComponents );
