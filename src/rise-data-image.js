@@ -1,4 +1,4 @@
-/* eslint-disable no-warning-comments */
+/* eslint-disable no-console, no-warning-comments */
 
 import { PolymerElement } from '@polymer/polymer/polymer-element.js';
 import { version } from "./rise-data-image-version.js";
@@ -38,17 +38,21 @@ class RiseDataImage extends PolymerElement {
     super();
 
     this.file = this.getAttribute('file');
+    console.log("constructor");
   }
 
   ready() {
+    console.log("component ready start");
     super.ready();
 
+    console.log("component ready start");
     this._sendImageEvent(RiseDataImage.EVENT_CONFIGURED);
     this.addEventListener(
       RiseDataImage.EVENT_START,
       () => this._handleStart(),
       { once: true }
     );
+    console.log("component ready end");
   }
 
   _handleStart() {
