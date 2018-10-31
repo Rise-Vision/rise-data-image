@@ -15,19 +15,10 @@
       import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
     </script>
     <script src="https://widgets.risevision.com/__STAGE__/common/config-test.js"></script>
-    <script src="https://widgets.risevision.com/__STAGE__/common/rise-player-configuration.js"></script>
-    <script src="https://widgets.risevision.com/__STAGE__/common/rise-local-messaging.js"></script>
-    <script src="https://widgets.risevision.com/__STAGE__/common/rise-helpers.js"></script>
-    <script src="https://widgets.risevision.com/__STAGE__/common/rise-logger.js"></script>
-    <script src="https://widgets.risevision.com/__STAGE__/common/rise-local-storage.js"></script>
-    <script src="https://widgets.risevision.com/__STAGE__/common/rise-component-loader.js"></script>
+    <script src="https://widgets.risevision.com/__STAGE__/common/common-template.js"></script>
+    <script src="https://widgets.risevision.com/staging/components/rise-data-image/__VERSION__/rise-data-image.js"></script>
     <script>
-      RisePlayerConfiguration.ComponentLoader.components = [
-        {
-          name: "rise-data-image",
-          url: "https://widgets.risevision.com/staging/components/rise-data-image/__VERSION__/rise-data-image.js"
-        }
-      ];
+      RisePlayerConfiguration.ComponentLoader.components = [];
 
       if (document.domain.indexOf("localhost") === -1) {
         try {
@@ -38,8 +29,27 @@
         }
       }
     </script>
+  </head>
+  <body>
+    <rise-data-image id="rise-data-image-01"
+      file="risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png">
+    </rise-data-image>
+
+    <div id="image01">
+      <p>Downloading image, please wait...</p>
+    </div>
+
+    <hr>
+
     <script>
-      function configureComponents() {
+      function configureComponents(event) {
+        if ( !event.detail.isLoaded ) {
+          console.log( "load process failed" );
+          return;
+        }
+
+        console.log( "manual component configuration" );
+
         // all of the following will be implemented later by a rise-image component
         let image01 = document.querySelector('#rise-data-image-01');
         image01.addEventListener('image-status-updated', event => {
@@ -54,19 +64,14 @@
             <p>image error: ${ event.detail.errorMessage }</p>
           `;
         });
+
+        image01.addEventListener('configured', () =>
+          image01.dispatchEvent( new CustomEvent( "start" ) )
+        );
+        image01.dispatchEvent( new CustomEvent( "start" ) );
       }
 
-      function fetchAndConfigureComponents(event) {
-        if ( !event.detail.isLoaded ) {
-          console.log( "load process failed" );
-          return;
-        }
-
-        console.log( "manual configuration" );
-        configureComponents();
-      }
-
-      window.addEventListener( "rise-components-loaded", fetchAndConfigureComponents );
+      window.addEventListener( "rise-components-loaded", configureComponents );
     </script>
     <script>
       console.log("configuring");
@@ -84,16 +89,5 @@
         detail: { serverUrl: "http://localhost:8080" }
       });
     </script>
-  </head>
-  <body>
-    <rise-data-image id="rise-data-image-01"
-      file="risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png">
-    </rise-data-image>
-
-    <div id="image01">
-      <p>Downloading image, please wait...</p>
-    </div>
-
-    <hr>
   </body>
 </html>

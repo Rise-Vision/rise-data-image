@@ -15,20 +15,11 @@
       import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
     </script>
     <script src="https://widgets.risevision.com/beta/common/config-test.js"></script>
-    <script src="https://widgets.risevision.com/beta/common/rise-player-configuration.js"></script>
-    <script src="https://widgets.risevision.com/beta/common/rise-local-messaging.js"></script>
-    <script src="https://widgets.risevision.com/beta/common/rise-helpers.js"></script>
-    <script src="https://widgets.risevision.com/beta/common/rise-logger.js"></script>
-    <script src="https://widgets.risevision.com/beta/common/rise-local-storage.js"></script>
-    <script src="https://widgets.risevision.com/beta/common/rise-component-loader.js"></script>
+    <script src="https://widgets.risevision.com/beta/common/common-template.js"></script>
+    <script src="https://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"></script>
     <script>
       // remove the following sentence if you are combining rise-data-image with rise-financial beta
-      RisePlayerConfiguration.ComponentLoader.components = [
-        {
-          name: "rise-data-image",
-          url: "https://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"
-        }
-      ];
+      RisePlayerConfiguration.ComponentLoader.components = [];
 
       if (document.domain.indexOf("localhost") === -1) {
         try {
@@ -39,6 +30,18 @@
         }
       }
     </script>
+  </head>
+  <body>
+    <rise-data-image id="rise-data-image-01"
+      file="risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png">
+    </rise-data-image>
+
+    <div id="image01">
+      <p>Downloading image, please wait...</p>
+    </div>
+
+    <hr>
+
     <script>
       function configureComponents(event) {
         if ( !event.detail.isLoaded ) {
@@ -62,6 +65,15 @@
             <p>image error: ${ event.detail.errorMessage }</p>
           `;
         });
+
+        // Start the component once it's configured;
+        // but if it's already configured the listener won't work,
+        // so we directly send the request also.
+        // In the future, we may encapsulate the following lines in a helper function.
+        image01.addEventListener('configured', () =>
+          image01.dispatchEvent( new CustomEvent( "start" ) )
+        );
+        image01.dispatchEvent( new CustomEvent( "start" ) );
       }
 
       window.addEventListener( "rise-components-loaded", configureComponents );
@@ -82,16 +94,5 @@
         detail: { serverUrl: "http://localhost:8080" }
       });
     </script>
-  </head>
-  <body>
-    <rise-data-image id="rise-data-image-01"
-      file="risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png">
-    </rise-data-image>
-
-    <div id="image01">
-      <p>Downloading image, please wait...</p>
-    </div>
-
-    <hr>
   </body>
 </html>

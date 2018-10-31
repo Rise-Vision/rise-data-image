@@ -57,6 +57,11 @@
 
             done();
           });
+
+          element.addEventListener('configured', () =>
+            element.dispatchEvent( new CustomEvent( "start" ) )
+          );
+          element.dispatchEvent( new CustomEvent( "start" ) );
         });
       });
     </script>
@@ -91,6 +96,11 @@
 
             done();
           });
+
+          element.addEventListener('configured', () =>
+            element.dispatchEvent( new CustomEvent( "start" ) )
+          );
+          element.dispatchEvent( new CustomEvent( "start" ) );
         });
       });
     </script>
@@ -132,6 +142,11 @@
 
             done();
           });
+
+          element.addEventListener('configured', () =>
+            element.dispatchEvent( new CustomEvent( "start" ) )
+          );
+          element.dispatchEvent( new CustomEvent( "start" ) );
         });
       });
     </script>
