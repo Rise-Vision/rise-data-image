@@ -1,0 +1,123 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="../../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../node_modules/wct-browser-legacy/browser.js"></script>
+    <script>
+        const SAMPLE_PATH = "risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png";
+        const SAMPLE_URL = `https://storage.googleapis.com/${ SAMPLE_PATH }`;
+
+        RisePlayerConfiguration = {};
+    </script>
+    <script src="../../src/rise-data-image.js" type="module"></script>
+</head>
+<body>
+<test-fixture id="test-block">
+    <template>
+        <rise-data-image id="test" file="risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png">
+        </rise-data-image>
+    </template>
+</test-fixture>
+
+<script>
+  suite( "logging", () => {
+    const componentData = {
+        name: "rise-data-image",
+        id: "test",
+        version: "__VERSION__"
+      },
+      watchTimeoutDuration = 1000;
+
+    let element;
+
+    setup(() => {
+      RisePlayerConfiguration.LocalStorage = {
+        watchSingleFile: ( file, handler ) => {
+          setTimeout(
+            () => handler({ status: "CURRENT", fileUrl: SAMPLE_URL }), watchTimeoutDuration
+          );
+        }
+      };
+
+      RisePlayerConfiguration.Logger = {
+        info: sinon.spy(),
+        error: sinon.spy()
+      };
+
+      element = fixture( "test-block" );
+    });
+
+    teardown(() => {
+      RisePlayerConfiguration.LocalStorage = {};
+      RisePlayerConfiguration.Logger = {};
+    });
+
+    test( "should log 'configured' event with correct params", () => {
+      assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 0 ][ 0 ], componentData );
+      assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 0 ][ 1 ], { event: "configured" });
+    });
+
+    test( "should log 'start' event with correct params", () => {
+      element.dispatchEvent( new CustomEvent( "start" ));
+
+      assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 1 ][ 0 ], componentData );
+      assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 1 ][ 1 ], {
+        event: "start",
+        event_details: { file: "risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png" }
+      });
+    });
+
+    test( "should log 'image-status-updated' event with correct params", done => {
+      element.dispatchEvent( new CustomEvent( "start" ));
+
+      setTimeout(() => {
+        assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 2 ][ 0 ], componentData );
+        assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 2 ][ 1 ], {
+          event: "image-status-updated",
+          event_details: {
+            status: "CURRENT", url: SAMPLE_URL, file: SAMPLE_PATH
+          }
+        });
+
+        done();
+      }, watchTimeoutDuration );
+    });
+
+    test( "should log an 'image-error' event with correct params", done => {
+      RisePlayerConfiguration.LocalStorage.watchSingleFile = ( file, handler ) => {
+        setTimeout(
+          () => handler({
+            fileUrl: null,
+            status: "FILE-ERROR",
+            errorMessage: "image download error",
+            errorDetail: "network failure"
+          }), watchTimeoutDuration
+        );
+      };
+
+      element.dispatchEvent( new CustomEvent( "start" ));
+
+      setTimeout( () => {
+        assert.equal( RisePlayerConfiguration.Logger.info.callCount, 2 ); // configure, start
+
+        assert.deepEqual( RisePlayerConfiguration.Logger.error.args[ 0 ][ 0 ], componentData );
+        assert.deepEqual( RisePlayerConfiguration.Logger.error.args[ 0 ][ 1 ], {
+          event: "image-error",
+          event_details: {
+            file: SAMPLE_PATH,
+            errorMessage: "image download error",
+            errorDetail: "network failure"
+          }
+        });
+
+        done();
+      }, watchTimeoutDuration );
+    });
+  });
+</script>
+</body>
+</html>
