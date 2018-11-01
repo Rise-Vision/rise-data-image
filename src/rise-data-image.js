@@ -48,16 +48,59 @@ class RiseDataImage extends PolymerElement {
       () => this._handleStart(),
       { once: true }
     );
+
+    this._logInfo( RiseDataImage.EVENT_CONFIGURED );
     this._sendImageEvent( RiseDataImage.EVENT_CONFIGURED );
+  }
+
+  _getComponentData() {
+    return {
+      name: "rise-data-image",
+      id: this.id,
+      version: version
+    };
+  }
+
+  _getStorageData() {
+    return {
+      configuration: "storage file",
+      file_form: this._getStorageFileFormat( this.file ),
+      file_path: this.file,
+      local_url: this.url
+    }
+  }
+
+  _getStorageFileFormat( filePath ) {
+    return filePath.substr( filePath.lastIndexOf( "." ) + 1 ).toLowerCase();
   }
 
   _handleStart() {
     // TODO: check license ( JTBD later on this epic )
 
+    this._logInfo( RiseDataImage.EVENT_START );
+
     RisePlayerConfiguration.LocalStorage.watchSingleFile(
       this.file, message => this._handleSingleFileUpdate( message )
     );
-    console.log( "version is: ", version ); // eslint-disable-line no-console
+  }
+
+  _logInfo( event, details = null ) {
+    RisePlayerConfiguration.Logger.info( this._getComponentData(), event, details, { storage: this._getStorageData() });
+  }
+
+  _logError( event, details = null ) {
+    RisePlayerConfiguration.Logger.error( this._getComponentData(), event, details, { storage: this._getStorageData() });
+  }
+
+  _handleSingleFileError( message ) {
+    const details = { file: this.file, errorMessage: message.errorMessage, errorDetail: message.errorDetail };
+
+    this._logError( RiseDataImage.EVENT_IMAGE_ERROR, {
+      errorMessage: message.errorMessage,
+      errorDetail: message.errorDetail
+    });
+
+    this._sendImageEvent( RiseDataImage.EVENT_IMAGE_ERROR, details );
   }
 
   _handleSingleFileUpdate( message ) {
@@ -68,12 +111,11 @@ class RiseDataImage extends PolymerElement {
     this.url = message.fileUrl || "";
 
     if ( message.status === "FILE-ERROR" ) {
-      return this._sendImageEvent( RiseDataImage.EVENT_IMAGE_ERROR, {
-        file: this.file,
-        errorMessage: message.errorMessage,
-        errorDetail: message.errorDetail
-      });
+      this._handleSingleFileError( message );
+      return;
     }
+
+    this._logInfo( RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, { status: message.status });
 
     this._sendImageEvent( RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, {
       file: this.file, url: this.url, status: message.status
