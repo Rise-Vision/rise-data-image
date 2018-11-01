@@ -70,102 +70,98 @@
           element.dispatchEvent( new CustomEvent( "start" ) );
         });
       });
-    </script>
 
-    <script>
       suite('rise-data-image image not available', () => {
-        let element;
+          let element;
 
-        setup(() => {
-          RisePlayerConfiguration.LocalStorage = {
-            watchSingleFile: (file, handler) => {
-              setTimeout(
-                () => handler({ status: "NOEXIST" }), 1000
-              );
-            }
-          };
+          setup(() => {
+              RisePlayerConfiguration.LocalStorage = {
+                  watchSingleFile: (file, handler) => {
+                      setTimeout(
+                          () => handler({ status: "NOEXIST" }), 1000
+                      );
+                  }
+              };
 
-          RisePlayerConfiguration.Logger = {
-            info: () => {},
-            error: () => {}
-          };
+              RisePlayerConfiguration.Logger = {
+                  info: () => {},
+                  error: () => {}
+              };
 
-          element = fixture('test-block');
-        });
-
-        teardown(() => {
-          RisePlayerConfiguration.LocalStorage = {};
-          RisePlayerConfiguration.Logger = {};
-        });
-
-        test('it should send an image updated event with NOEXIST status if an image does not exist', done => {
-          element.addEventListener('image-status-updated', event => {
-            assert.deepEqual(event.detail, {
-              status: "NOEXIST", file: SAMPLE_PATH, url: ""
-            });
-
-            assert(!element.url);
-
-            done();
+              element = fixture('test-block');
           });
 
-          element.addEventListener('configured', () =>
-            element.dispatchEvent( new CustomEvent( "start" ) )
-          );
-          element.dispatchEvent( new CustomEvent( "start" ) );
-        });
+          teardown(() => {
+              RisePlayerConfiguration.LocalStorage = {};
+              RisePlayerConfiguration.Logger = {};
+          });
+
+          test('it should send an image updated event with NOEXIST status if an image does not exist', done => {
+              element.addEventListener('image-status-updated', event => {
+                  assert.deepEqual(event.detail, {
+                      status: "NOEXIST", file: SAMPLE_PATH, url: ""
+                  });
+
+                  assert(!element.url);
+
+                  done();
+              });
+
+              element.addEventListener('configured', () =>
+                  element.dispatchEvent( new CustomEvent( "start" ) )
+              );
+              element.dispatchEvent( new CustomEvent( "start" ) );
+          });
       });
-    </script>
 
-    <script>
       suite('rise-data-image image error', () => {
-        let element;
+          let element;
 
-        setup(() => {
-          RisePlayerConfiguration.LocalStorage = {
-            watchSingleFile: (file, handler) => {
-              setTimeout(
-                () => handler({
-                  fileUrl: null,
-                  status: "FILE-ERROR",
-                  errorMessage: "image download error",
-                  errorDetail: "network failure"
-                }), 1000
-              );
-            }
-          };
+          setup(() => {
+              RisePlayerConfiguration.LocalStorage = {
+                  watchSingleFile: (file, handler) => {
+                      setTimeout(
+                          () => handler({
+                              fileUrl: null,
+                              status: "FILE-ERROR",
+                              errorMessage: "image download error",
+                              errorDetail: "network failure"
+                          }), 1000
+                      );
+                  }
+              };
 
-          RisePlayerConfiguration.Logger = {
-            info: () => {},
-            error: () => {}
-          };
+              RisePlayerConfiguration.Logger = {
+                  info: () => {},
+                  error: () => {}
+              };
 
-          element = fixture('test-block');
-        });
-
-        teardown(() => {
-          RisePlayerConfiguration.LocalStorage = {};
-          RisePlayerConfiguration.Logger = {};
-        });
-
-        test('it should send an image error event if an image local storage error was received', done => {
-          element.addEventListener('image-error', event => {
-            assert(!element.url);
-
-            assert.deepEqual( event.detail, {
-              file: SAMPLE_PATH,
-              errorMessage: "image download error",
-              errorDetail: "network failure"
-            });
-
-            done();
+              element = fixture('test-block');
           });
 
-          element.addEventListener('configured', () =>
-            element.dispatchEvent( new CustomEvent( "start" ) )
-          );
-          element.dispatchEvent( new CustomEvent( "start" ) );
-        });
+          teardown(() => {
+              RisePlayerConfiguration.LocalStorage = {};
+              RisePlayerConfiguration.Logger = {};
+          });
+
+          test('it should send an image error event if an image local storage error was received', done => {
+              element.addEventListener('image-error', event => {
+                  assert(!element.url);
+
+                  assert.deepEqual( event.detail, {
+                      file: SAMPLE_PATH,
+                      errorMessage: "image download error",
+                      errorDetail: "network failure"
+                  });
+
+                  done();
+              });
+
+              element.addEventListener('configured', () =>
+                  element.dispatchEvent( new CustomEvent( "start" ) )
+              );
+              element.dispatchEvent( new CustomEvent( "start" ) );
+          });
       });
     </script>
   </body>
