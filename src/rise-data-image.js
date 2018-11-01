@@ -49,8 +49,7 @@ class RiseDataImage extends PolymerElement {
       { once: true }
     );
 
-    RisePlayerConfiguration.Logger.info( this._getComponentData(), { "event": RiseDataImage.EVENT_CONFIGURED });
-
+    this._logInfo( RiseDataImage.EVENT_CONFIGURED );
     this._sendImageEvent( RiseDataImage.EVENT_CONFIGURED );
   }
 
@@ -62,25 +61,43 @@ class RiseDataImage extends PolymerElement {
     };
   }
 
+  _getStorageData() {
+    return {
+      configuration: "storage file",
+      file_form: this._getStorageFileFormat( this.file ),
+      file_path: this.file,
+      local_url: this.url
+    }
+  }
+
+  _getStorageFileFormat( filePath ) {
+    return filePath.substr( filePath.lastIndexOf( "." ) + 1 ).toLowerCase();
+  }
+
   _handleStart() {
     // TODO: check license ( JTBD later on this epic )
 
-    RisePlayerConfiguration.Logger.info( this._getComponentData(), {
-      "event": RiseDataImage.EVENT_START,
-      "event_details": { file: this.file }
-    });
+    this._logInfo( RiseDataImage.EVENT_START );
 
     RisePlayerConfiguration.LocalStorage.watchSingleFile(
       this.file, message => this._handleSingleFileUpdate( message )
     );
   }
 
+  _logInfo( event, details = null ) {
+    RisePlayerConfiguration.Logger.info( this._getComponentData(), event, details, { storage: this._getStorageData() });
+  }
+
+  _logError( event, details = null ) {
+    RisePlayerConfiguration.Logger.error( this._getComponentData(), event, details, { storage: this._getStorageData() });
+  }
+
   _handleSingleFileError( message ) {
     const details = { file: this.file, errorMessage: message.errorMessage, errorDetail: message.errorDetail };
 
-    RisePlayerConfiguration.Logger.error( this._getComponentData(), {
-      "event": RiseDataImage.EVENT_IMAGE_ERROR,
-      "event_details": details
+    this._logError( RiseDataImage.EVENT_IMAGE_ERROR, {
+      errorMessage: message.errorMessage,
+      errorDetail: message.errorDetail
     });
 
     this._sendImageEvent( RiseDataImage.EVENT_IMAGE_ERROR, details );
@@ -98,14 +115,11 @@ class RiseDataImage extends PolymerElement {
       return;
     }
 
-    const details = { file: this.file, url: this.url, status: message.status };
+    this._logInfo( RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, { status: message.status });
 
-    RisePlayerConfiguration.Logger.info( this._getComponentData(), {
-      "event": RiseDataImage.EVENT_IMAGE_STATUS_UPDATED,
-      "event_details": details
+    this._sendImageEvent( RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, {
+      file: this.file, url: this.url, status: message.status
     });
-
-    this._sendImageEvent( RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, details );
   }
 
   _sendImageEvent( eventName, detail = {}) {
