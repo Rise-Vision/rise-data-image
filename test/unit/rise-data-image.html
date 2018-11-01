@@ -163,6 +163,35 @@
               element.dispatchEvent( new CustomEvent( "start" ) );
           });
       });
+
+      suite( "_getStorageFileFormat", () => {
+        let element;
+
+        setup(() => {
+          RisePlayerConfiguration.LocalStorage = {
+            watchSingleFile: () => {}
+          };
+
+          RisePlayerConfiguration.Logger = {
+            info: () => {},
+            error: () => {}
+          };
+
+          element = fixture('test-block');
+        });
+
+        teardown(() => {
+          RisePlayerConfiguration.LocalStorage = {};
+          RisePlayerConfiguration.Logger = {};
+        });
+
+        test( "should return correct format from file path", () => {
+          assert.equal( element._getStorageFileFormat( SAMPLE_PATH ), "png" );
+          assert.equal( element._getStorageFileFormat( "risemedialibrary-abc123/logo.jpg" ), "jpg" );
+          assert.equal( element._getStorageFileFormat( "risemedialibrary-abc123/logo.jpg.svg" ), "svg" );
+          assert.equal( element._getStorageFileFormat( "" ), "" );
+        } );
+      } );
     </script>
   </body>
 </html>
