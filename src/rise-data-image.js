@@ -48,16 +48,42 @@ class RiseDataImage extends PolymerElement {
       () => this._handleStart(),
       { once: true }
     );
+
+    RisePlayerConfiguration.Logger.info( this._getComponentData(), { "event": RiseDataImage.EVENT_CONFIGURED });
+
     this._sendImageEvent( RiseDataImage.EVENT_CONFIGURED );
+  }
+
+  _getComponentData() {
+    return {
+      name: "rise-data-image",
+      id: this.id,
+      version: version
+    };
   }
 
   _handleStart() {
     // TODO: check license ( JTBD later on this epic )
 
+    RisePlayerConfiguration.Logger.info( this._getComponentData(), {
+      "event": RiseDataImage.EVENT_START,
+      "event_details": { file: this.file }
+    });
+
     RisePlayerConfiguration.LocalStorage.watchSingleFile(
       this.file, message => this._handleSingleFileUpdate( message )
     );
-    console.log( "version is: ", version ); // eslint-disable-line no-console
+  }
+
+  _handleSingleFileError( message ) {
+    const details = { file: this.file, errorMessage: message.errorMessage, errorDetail: message.errorDetail };
+
+    RisePlayerConfiguration.Logger.error( this._getComponentData(), {
+      "event": RiseDataImage.EVENT_IMAGE_ERROR,
+      "event_details": details
+    });
+
+    this._sendImageEvent( RiseDataImage.EVENT_IMAGE_ERROR, details );
   }
 
   _handleSingleFileUpdate( message ) {
@@ -68,16 +94,18 @@ class RiseDataImage extends PolymerElement {
     this.url = message.fileUrl || "";
 
     if ( message.status === "FILE-ERROR" ) {
-      return this._sendImageEvent( RiseDataImage.EVENT_IMAGE_ERROR, {
-        file: this.file,
-        errorMessage: message.errorMessage,
-        errorDetail: message.errorDetail
-      });
+      this._handleSingleFileError( message );
+      return;
     }
 
-    this._sendImageEvent( RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, {
-      file: this.file, url: this.url, status: message.status
+    const details = { file: this.file, url: this.url, status: message.status };
+
+    RisePlayerConfiguration.Logger.info( this._getComponentData(), {
+      "event": RiseDataImage.EVENT_IMAGE_STATUS_UPDATED,
+      "event_details": details
     });
+
+    this._sendImageEvent( RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, details );
   }
 
   _sendImageEvent( eventName, detail = {}) {

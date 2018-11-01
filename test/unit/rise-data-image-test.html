@@ -36,11 +36,17 @@
             }
           };
 
+          RisePlayerConfiguration.Logger = {
+            info: () => {},
+            error: () => {}
+          };
+
           element = fixture('test-block');
         });
 
         teardown(() => {
           RisePlayerConfiguration.LocalStorage = {};
+          RisePlayerConfiguration.Logger = {};
         });
 
         test('it should have a property file', () => {
@@ -79,11 +85,17 @@
             }
           };
 
+          RisePlayerConfiguration.Logger = {
+            info: () => {},
+            error: () => {}
+          };
+
           element = fixture('test-block');
         });
 
         teardown(() => {
           RisePlayerConfiguration.LocalStorage = {};
+          RisePlayerConfiguration.Logger = {};
         });
 
         test('it should send an image updated event with NOEXIST status if an image does not exist', done => {
@@ -123,11 +135,17 @@
             }
           };
 
+          RisePlayerConfiguration.Logger = {
+            info: () => {},
+            error: () => {}
+          };
+
           element = fixture('test-block');
         });
 
         teardown(() => {
           RisePlayerConfiguration.LocalStorage = {};
+          RisePlayerConfiguration.Logger = {};
         });
 
         test('it should send an image error event if an image local storage error was received', done => {
