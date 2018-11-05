@@ -14,13 +14,10 @@
     <script type="module">
       import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
     </script>
-    <script src="https://widgets.risevision.com/beta/common/config-test.js"></script>
-    <script src="https://widgets.risevision.com/beta/common/common-template.js"></script>
+    <script src="https://widgets.risevision.com/beta/common/config-test.min.js"></script>
+    <script src="https://widgets.risevision.com/beta/common/common-template.min.js"></script>
     <script src="https://widgets.risevision.com/beta/components/rise-data-image/rise-data-image.js"></script>
     <script>
-      // remove the following sentence if you are combining rise-data-image with rise-financial beta
-      RisePlayerConfiguration.ComponentLoader.components = [];
-
       if (document.domain.indexOf("localhost") === -1) {
         try {
           document.domain = "risevision.com";
@@ -43,12 +40,7 @@
     <hr>
 
     <script>
-      function configureComponents(event) {
-        if ( !event.detail.isLoaded ) {
-          console.log( "load process failed" );
-          return;
-        }
-
+      function configureComponents() {
         console.log( "manual component configuration" );
 
         // all of the following will be implemented later by a rise-image component
@@ -76,11 +68,9 @@
         image01.dispatchEvent( new CustomEvent( "start" ) );
       }
 
-      window.addEventListener( "rise-components-loaded", configureComponents );
+      window.addEventListener( "rise-components-ready", configureComponents );
     </script>
     <script>
-      console.log("configuring");
-
       // electron / websocket or chromeos / window
       RisePlayerConfiguration.configure({
         displayId: "DISPLAY_ID",
