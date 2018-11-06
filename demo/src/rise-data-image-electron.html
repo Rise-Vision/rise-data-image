@@ -69,6 +69,16 @@
       }
 
       window.addEventListener( "rise-components-ready", configureComponents );
+
+      // Demonstrating how to handle no connection to local messaging via listening for event
+      // Note: the connection can also be checked via RisePlayerConfiguration.LocalMessaging.isConnected()
+      window.addEventListener( "rise-local-messaging-connection", event => {
+        if ( !event.detail.isConnected ) {
+          document.querySelector('#image01').innerHTML = `
+            <p>no connection to local messaging</p>
+          `;
+        }
+      } );
     </script>
     <script>
       // electron / websocket or chromeos / window
