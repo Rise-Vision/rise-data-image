@@ -11,7 +11,9 @@
       const SAMPLE_PATH = 'risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png';
       const SAMPLE_URL = `https://storage.googleapis.com/${ SAMPLE_PATH }`;
 
-      RisePlayerConfiguration = {};
+      RisePlayerConfiguration = {
+        isPreview: () => false
+      };
     </script>
     <script src="../../src/rise-data-image.js" type="module"></script>
   </head>
@@ -192,6 +194,45 @@
           assert.equal( element._getStorageFileFormat( "" ), "" );
         } );
       } );
+
+      suite('rise-data-image on preview', () => {
+        let element;
+
+        setup(() => {
+          RisePlayerConfiguration.isPreview = () => true;
+
+          RisePlayerConfiguration.Logger = {
+            info: () => {},
+            error: () => {}
+          };
+
+          element = fixture('test-block');
+        });
+
+        teardown(() => {
+          RisePlayerConfiguration.isPreview = () => false;
+
+          RisePlayerConfiguration.Logger = {};
+        });
+
+        test('it should send an image updated event', done => {
+          element.addEventListener('image-status-updated', event => {
+            assert.deepEqual(event.detail, {
+              status: "CURRENT", url: SAMPLE_URL, file: SAMPLE_PATH
+            });
+
+            assert.equal(element.url, SAMPLE_URL);
+
+            done();
+          });
+
+          element.addEventListener('configured', () =>
+            element.dispatchEvent( new CustomEvent( "start" ) )
+          );
+          element.dispatchEvent( new CustomEvent( "start" ) );
+        });
+      });
+
     </script>
   </body>
 </html>

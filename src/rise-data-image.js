@@ -34,6 +34,10 @@ class RiseDataImage extends PolymerElement {
     return "start";
   }
 
+  static get STORAGE_PREFIX() {
+    return "https://storage.googleapis.com/";
+  }
+
   constructor() {
     super();
 
@@ -43,11 +47,12 @@ class RiseDataImage extends PolymerElement {
   ready() {
     super.ready();
 
-    this.addEventListener(
-      RiseDataImage.EVENT_START,
-      () => this._handleStart(),
-      { once: true }
-    );
+    const handleStart = RisePlayerConfiguration.isPreview() ?
+      this._handleStartForPreview : this._handleStart;
+
+    this.addEventListener( RiseDataImage.EVENT_START, handleStart, {
+      once: true
+    });
 
     this._logInfo( RiseDataImage.EVENT_CONFIGURED );
     this._sendImageEvent( RiseDataImage.EVENT_CONFIGURED );
@@ -72,6 +77,13 @@ class RiseDataImage extends PolymerElement {
 
   _getStorageFileFormat( filePath ) {
     return filePath.substr( filePath.lastIndexOf( "." ) + 1 ).toLowerCase();
+  }
+
+  _handleStartForPreview() {
+    // check license for preview will be implemented in some other epic later
+
+    this.url = RiseDataImage.STORAGE_PREFIX + this.file
+    this._sendImageStatusUpdated( "CURRENT" );
   }
 
   _handleStart() {
@@ -115,10 +127,14 @@ class RiseDataImage extends PolymerElement {
       return;
     }
 
-    this._logInfo( RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, { status: message.status });
+    this._sendImageStatusUpdated( message.status );
+  }
+
+  _sendImageStatusUpdated( status ) {
+    this._logInfo( RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, { status: status });
 
     this._sendImageEvent( RiseDataImage.EVENT_IMAGE_STATUS_UPDATED, {
-      file: this.file, url: this.url, status: message.status
+      file: this.file, url: this.url, status: status
     });
   }
 

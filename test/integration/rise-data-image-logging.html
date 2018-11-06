@@ -10,8 +10,10 @@
     <script>
         const SAMPLE_PATH = "risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png";
         const SAMPLE_URL = `https://storage.googleapis.com/${ SAMPLE_PATH }`;
-
-        RisePlayerConfiguration = {};
+  
+        RisePlayerConfiguration = {
+          isPreview: () => false
+        };
     </script>
     <script src="../../src/rise-data-image.js" type="module"></script>
 </head>
