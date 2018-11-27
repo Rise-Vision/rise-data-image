@@ -47,8 +47,7 @@ class RiseDataImage extends PolymerElement {
   ready() {
     super.ready();
 
-    const handleStart = RisePlayerConfiguration.isPreview() ?
-      this._handleStartForPreview : this._handleStart;
+    const handleStart = this._handleStart;
 
     this.addEventListener( RiseDataImage.EVENT_START, handleStart, {
       once: true
@@ -87,6 +86,10 @@ class RiseDataImage extends PolymerElement {
   }
 
   _handleStart() {
+    if ( RisePlayerConfiguration.isPreview()) {
+      return this._handleStartForPreview();
+    }
+
     // TODO: check license ( JTBD later on this epic )
 
     this._logInfo( RiseDataImage.EVENT_START );
