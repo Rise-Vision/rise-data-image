@@ -47,7 +47,7 @@ class RiseDataImage extends PolymerElement {
   ready() {
     super.ready();
 
-    const handleStart = this._handleStart;
+    const handleStart = () => this._handleStart();
 
     this.addEventListener( RiseDataImage.EVENT_START, handleStart, {
       once: true
