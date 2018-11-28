@@ -10,7 +10,7 @@
     <script>
         const SAMPLE_PATH = "risemedialibrary-30007b45-3df0-4c7b-9f7f-7d8ce6443013/logo.png";
         const SAMPLE_URL = `https://storage.googleapis.com/${ SAMPLE_PATH }`;
-  
+
         RisePlayerConfiguration = {
           isPreview: () => false
         };
@@ -64,22 +64,13 @@
       RisePlayerConfiguration.Logger = {};
     });
 
-    test( "should log 'configured' event with correct params", () => {
-      assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 0 ][ 0 ], componentData );
-      assert.equal( RisePlayerConfiguration.Logger.info.args[ 0 ][ 1 ], "configured");
-      assert.isNull( RisePlayerConfiguration.Logger.info.args[ 0 ][ 2 ] );
-      assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 0 ][ 3 ], {
-        storage: storageData
-      } );
-    });
-
     test( "should log 'start' event with correct params", () => {
       element.dispatchEvent( new CustomEvent( "start" ));
 
-      assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 1 ][ 0 ], componentData );
-      assert.equal( RisePlayerConfiguration.Logger.info.args[ 1 ][ 1 ], "start");
-      assert.isNull( RisePlayerConfiguration.Logger.info.args[ 1 ][ 2 ] );
-      assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 1 ][ 3 ], {
+      assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 0 ][ 0 ], componentData );
+      assert.equal( RisePlayerConfiguration.Logger.info.args[ 0 ][ 1 ], "start");
+      assert.isNull( RisePlayerConfiguration.Logger.info.args[ 0 ][ 2 ] );
+      assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 0 ][ 3 ], {
         storage: storageData
       } );
     });
@@ -91,10 +82,10 @@
       element.dispatchEvent( new CustomEvent( "start" ));
 
       setTimeout(() => {
-        assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 2 ][ 0 ], componentData );
-        assert.equal( RisePlayerConfiguration.Logger.info.args[ 2 ][ 1 ], "image-status-updated");
-        assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 2 ][ 2 ], { status: "CURRENT" });
-        assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 2 ][ 3 ], {
+        assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 1 ][ 0 ], componentData );
+        assert.equal( RisePlayerConfiguration.Logger.info.args[ 1 ][ 1 ], "image-status-updated");
+        assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 1 ][ 2 ], { status: "CURRENT" });
+        assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 1 ][ 3 ], {
           storage: storage
         } );
 
@@ -117,7 +108,7 @@
       element.dispatchEvent( new CustomEvent( "start" ));
 
       setTimeout( () => {
-        assert.equal( RisePlayerConfiguration.Logger.info.callCount, 2 ); // configure, start
+        assert.equal( RisePlayerConfiguration.Logger.info.callCount, 1 ); // start
 
         assert.deepEqual( RisePlayerConfiguration.Logger.error.args[ 0 ][ 0 ], componentData );
         assert.equal( RisePlayerConfiguration.Logger.error.args[ 0 ][ 1 ], "image-error");
@@ -125,7 +116,7 @@
           errorMessage: "image download error",
           errorDetail: "network failure"
         });
-        assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 1 ][ 3 ], {
+        assert.deepEqual( RisePlayerConfiguration.Logger.info.args[ 0 ][ 3 ], {
           storage: storageData
         } );
 
