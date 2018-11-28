@@ -53,7 +53,6 @@ class RiseDataImage extends PolymerElement {
       once: true
     });
 
-    this._logInfo( RiseDataImage.EVENT_CONFIGURED );
     this._sendImageEvent( RiseDataImage.EVENT_CONFIGURED );
   }
 
