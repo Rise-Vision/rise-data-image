@@ -50,6 +50,7 @@ class RiseDataImage extends PolymerElement {
     super();
 
     this.file = this.getAttribute( "file" );
+    this._watchInitiated = false;
   }
 
   ready() {
@@ -103,9 +104,12 @@ class RiseDataImage extends PolymerElement {
       if ( status.authorized ) {
         this._logInfo( RiseDataImage.EVENT_LICENSED );
 
-        RisePlayerConfiguration.LocalStorage.watchSingleFile(
-          this.file, message => this._handleSingleFileUpdate( message )
-        );
+        if ( !this._watchInitiated ) {
+          RisePlayerConfiguration.LocalStorage.watchSingleFile(
+            this.file, message => this._handleSingleFileUpdate( message )
+          );
+          this._watchInitiated = true;
+        }
       } else {
         this._logWarning( RiseDataImage.EVENT_UNLICENSED );
         this._sendImageEvent( RiseDataImage.EVENT_UNLICENSED );
