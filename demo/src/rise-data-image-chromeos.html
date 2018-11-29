@@ -57,6 +57,11 @@
             <p>image error: ${ event.detail.errorMessage }</p>
           `;
         });
+        image01.addEventListener('unlicensed', () => {
+          document.querySelector('#image01').innerHTML = `
+            <p>image warning: display is unlicensed</p>
+          `;
+        });
 
         // Start the component once it's configured;
         // but if it's already configured the listener won't work,

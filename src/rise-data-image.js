@@ -34,6 +34,14 @@ class RiseDataImage extends PolymerElement {
     return "start";
   }
 
+  static get EVENT_LICENSED() {
+    return "licensed";
+  }
+
+  static get EVENT_UNLICENSED() {
+    return "unlicensed";
+  }
+
   static get STORAGE_PREFIX() {
     return "https://storage.googleapis.com/";
   }
@@ -42,6 +50,7 @@ class RiseDataImage extends PolymerElement {
     super();
 
     this.file = this.getAttribute( "file" );
+    this._watchInitiated = false;
   }
 
   ready() {
@@ -80,7 +89,7 @@ class RiseDataImage extends PolymerElement {
   _handleStartForPreview() {
     // check license for preview will be implemented in some other epic later
 
-    this.url = RiseDataImage.STORAGE_PREFIX + this.file
+    this.url = RiseDataImage.STORAGE_PREFIX + this.file;
     this._sendImageStatusUpdated( "CURRENT" );
   }
 
@@ -89,13 +98,23 @@ class RiseDataImage extends PolymerElement {
       return this._handleStartForPreview();
     }
 
-    // TODO: check license ( JTBD later on this epic )
-
     this._logInfo( RiseDataImage.EVENT_START );
 
-    RisePlayerConfiguration.LocalStorage.watchSingleFile(
-      this.file, message => this._handleSingleFileUpdate( message )
-    );
+    RisePlayerConfiguration.Licensing.onStorageLicenseStatusChange( status => {
+      if ( status.authorized ) {
+        this._logInfo( RiseDataImage.EVENT_LICENSED );
+
+        if ( !this._watchInitiated ) {
+          RisePlayerConfiguration.LocalStorage.watchSingleFile(
+            this.file, message => this._handleSingleFileUpdate( message )
+          );
+          this._watchInitiated = true;
+        }
+      } else {
+        this._logWarning( RiseDataImage.EVENT_UNLICENSED );
+        this._sendImageEvent( RiseDataImage.EVENT_UNLICENSED );
+      }
+    });
   }
 
   _logInfo( event, details = null ) {
@@ -104,6 +123,10 @@ class RiseDataImage extends PolymerElement {
 
   _logError( event, details = null ) {
     RisePlayerConfiguration.Logger.error( this._getComponentData(), event, details, { storage: this._getStorageData() });
+  }
+
+  _logWarning( event, details = null ) {
+    RisePlayerConfiguration.Logger.warning( this._getComponentData(), event, details, { storage: this._getStorageData() });
   }
 
   _handleSingleFileError( message ) {

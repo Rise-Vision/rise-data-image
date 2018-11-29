@@ -26,6 +26,8 @@
     </test-fixture>
 
     <script>
+      let licenseMock = { authorized: true };
+
       suite('rise-data-image', () => {
         let element;
 
@@ -40,7 +42,12 @@
 
           RisePlayerConfiguration.Logger = {
             info: () => {},
-            error: () => {}
+            error: () => {},
+            warning: () => {}
+          };
+
+          RisePlayerConfiguration.Licensing = {
+            onStorageLicenseStatusChange: handler => handler( licenseMock )
           };
 
           element = fixture('test-block');
@@ -49,6 +56,7 @@
         teardown(() => {
           RisePlayerConfiguration.LocalStorage = {};
           RisePlayerConfiguration.Logger = {};
+          RisePlayerConfiguration.Licensing = {};
         });
 
         test('it should have a property file', () => {
@@ -65,6 +73,22 @@
 
             done();
           });
+
+          element.addEventListener('configured', () =>
+            element.dispatchEvent( new CustomEvent( "start" ) )
+          );
+          element.dispatchEvent( new CustomEvent( "start" ) );
+        });
+
+        test("is should send an 'unlicensed' event if display is unlicensed", done => {
+          element.addEventListener('unlicensed', event => {
+            assert.deepEqual(event.detail, {});
+            licenseMock = {authorized: true};
+
+            done();
+          });
+
+          licenseMock = {authorized: false};
 
           element.addEventListener('configured', () =>
             element.dispatchEvent( new CustomEvent( "start" ) )
@@ -90,12 +114,17 @@
                   error: () => {}
               };
 
+              RisePlayerConfiguration.Licensing = {
+                onStorageLicenseStatusChange: handler => handler( licenseMock )
+              };
+
               element = fixture('test-block');
           });
 
           teardown(() => {
               RisePlayerConfiguration.LocalStorage = {};
               RisePlayerConfiguration.Logger = {};
+              RisePlayerConfiguration.Licensing = {};
           });
 
           test('it should send an image updated event with NOEXIST status if an image does not exist', done => {
@@ -138,12 +167,17 @@
                   error: () => {}
               };
 
+              RisePlayerConfiguration.Licensing = {
+                onStorageLicenseStatusChange: handler => handler( licenseMock )
+              };
+
               element = fixture('test-block');
           });
 
           teardown(() => {
               RisePlayerConfiguration.LocalStorage = {};
               RisePlayerConfiguration.Logger = {};
+              RisePlayerConfiguration.Licensing = {};
           });
 
           test('it should send an image error event if an image local storage error was received', done => {
