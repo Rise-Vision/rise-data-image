@@ -94,8 +94,6 @@ jobs:
           sed "
             s/__STAGE__/<< parameters.stage >>/;
             s/__VERSION__/$VERSION/;
-            s/__PLAYER__/electron/;
-            s/__CONNECTION__/websocket/;
           " e2e/rise-data-image.html > e2e/rise-data-image-electron.html
       - run: cp e2e/polymer-e2e-electron.json polymer.json
       - run: polymer build
@@ -286,7 +284,7 @@ workflows:
       - test-e2e-electron:
           stage: beta
           displayId: 9YP68DHZ4HUJ
-          installerPath: https://storage.googleapis.com/install-versions.risevision.com/beta/
+          installerPath: https://storage.googleapis.com/install-versions.risevision.com/
           name: test-e2e-electron-beta
           requires:
             - deploy-stage

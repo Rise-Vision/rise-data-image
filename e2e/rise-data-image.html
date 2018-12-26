@@ -67,18 +67,7 @@
       window.addEventListener( "rise-components-ready", configureComponents );
     </script>
     <script>
-      // electron / websocket or chromeos / window
-      RisePlayerConfiguration.configure({
-        displayId: "DISPLAY_ID",
-        companyId: "COMPANY_ID",
-        playerType: "__STAGE__",
-        playerVersion: "TEST_VERSION",
-        os: "TEST_OS"
-      }, {
-        player: "__PLAYER__",
-        connectionType: "__CONNECTION__",
-        detail: { serverUrl: "http://localhost:8080" }
-      });
+      RisePlayerConfiguration.configure();
     </script>
   </body>
 </html>
