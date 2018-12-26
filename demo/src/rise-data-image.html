@@ -86,18 +86,7 @@
       } );
     </script>
     <script>
-      // electron / websocket or chromeos / window
-      RisePlayerConfiguration.configure({
-        displayId: "DISPLAY_ID",
-        companyId: "COMPANY_ID",
-        playerType: "stable",
-        playerVersion: "TEST_VERSION",
-        os: "TEST_OS"
-      }, {
-        player: "electron",
-        connectionType: "websocket",
-        detail: { serverUrl: "http://localhost:8080" }
-      });
+      RisePlayerConfiguration.configure();
     </script>
   </body>
 </html>
