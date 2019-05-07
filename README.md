@@ -1,4 +1,7 @@
-# rise-data-image
+# rise-data-image DEPRECATED
+
+*PLEASE NOTICE: This component's functionality has been integrated into [rise-image](https://github.com/Rise-Vision/rise-image).*
+*The current repository won't be maintained any longer, and will be archived soon.*
 
 Web component that retrieves image data.
 
